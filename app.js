@@ -15,6 +15,7 @@ const paymentMethodRoutes = require('./src/routes/paymentMethodRoutes');
 const ticketRoutes = require('./src/routes/ticketRoutes');
 const shiftReportRoutes = require('./src/routes/shiftReportRoutes');
 const adminShiftReportRoutes = require('./src/routes/adminShiftReportRoutes');
+const adminDashboardRoutes = require('./src/routes/adminDashboardRoutes');
 const app = express();
 
 app.use(express.json());
@@ -23,7 +24,13 @@ app.use(morgan('dev'));
 // CORS middleware cho cả 3000 và 5173
 app.use(
     cors({
-        origin: ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:8081'],
+        origin: [
+            'http://localhost:5173',
+            'http://localhost:3000',
+            'http://localhost:8081',
+            'http://localhost:9000',
+            'http://192.168.1.43:8081',
+        ],
         credentials: true,
     })
 );
@@ -35,6 +42,7 @@ app.use('/api/routes', routeRoutes);
 app.use('/api/stops', stopRoutes);
 app.use('/api/route-reports', routeReportRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/admin/dashboard', adminDashboardRoutes);
 app.use('/api/admin', adminUserRoutes);
 app.use('/api/suggest-locations', suggestLocationRoutes);
 app.use('/api/trips', tripRoutes);
