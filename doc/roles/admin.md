@@ -3,7 +3,7 @@
 **Role:** `admin`  
 **Base URL:** `http://localhost:3000`
 
-Admin có quyền quản trị hệ thống, cộng với hầu hết API yêu cầu đăng nhập (trừ API chỉ dành cho `staff`).
+Admin quản lý toàn bộ hệ thống: dữ liệu tuyến, nội dung, người dùng, thống kê, duyệt báo cáo ca.
 
 ---
 
@@ -22,15 +22,15 @@ Admin có quyền quản trị hệ thống, cộng với hầu hết API yêu c
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
-| 5 | Upload ảnh (tối đa 5 ảnh) | POST | `/api/upload/images` | Có |
+| 5 | Upload ảnh (thumbnail, ảnh bài viết, …) | POST | `/api/upload/images` | Có |
 
 ---
 
-## 3. Bài viết (Post)
+## 3. Bài viết (Post) — quản lý nội dung
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
-| 6 | Tạo bài viết | POST | `/api/posts` | Có |
+| 6 | Tạo bài viết (tin tức, thông báo) | POST | `/api/posts` | Có |
 | 7 | Sửa bài viết | PUT | `/api/posts/:id` | Có |
 | 8 | Xóa bài viết | DELETE | `/api/posts/:id` | Có |
 | 9 | Danh sách bài viết | POST | `/api/posts/listPosts` | Không |
@@ -38,93 +38,74 @@ Admin có quyền quản trị hệ thống, cộng với hầu hết API yêu c
 
 ---
 
-## 4. Tuyến xe (Route)
+## 4. Tuyến xe (Route) — quản lý dữ liệu vận hành
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
-| 11 | Tạo tuyến | POST | `/api/routes/create` | Có |
-| 12 | Cập nhật tuyến (gán nhân viên `staffId`) | PUT | `/api/routes/update/:id` | Có |
+| 11 | Tạo tuyến mới (gán `staffId` cho nhân viên phụ trách) | POST | `/api/routes/create` | Có |
+| 12 | Cập nhật tuyến | PUT | `/api/routes/update/:id` | Có |
 | 13 | Xóa tuyến | DELETE | `/api/routes/delete/:id` | Có |
-| 14 | Danh sách tuyến | POST | `/api/routes/listRoutes` | Không |
+| 14 | Danh sách tuyến (phân trang, tìm kiếm, sắp xếp) | POST | `/api/routes/listRoutes` | Không |
 | 15 | Chi tiết tuyến | GET | `/api/routes/detail/:id` | Không |
+
+> `userId` trên Route = admin tạo tuyến. `staffId` = nhân viên được gán vận hành.
 
 ---
 
-## 5. Điểm dừng (Stop)
+## 5. Điểm dừng (Stop) — quản lý theo tuyến
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
-| 16 | Tạo điểm dừng | POST | `/api/stops/create` | Có |
+| 16 | Tạo điểm dừng trên tuyến | POST | `/api/stops/create` | Có |
 | 17 | Cập nhật điểm dừng | PUT | `/api/stops/update/:id` | Có |
 | 18 | Xóa điểm dừng | DELETE | `/api/stops/delete/:id` | Có |
 | 19 | Danh sách điểm dừng theo tuyến | POST | `/api/stops/listByRoute` | Không |
 | 20 | Chi tiết điểm dừng | GET | `/api/stops/detail/:id` | Không |
 
+> Stop CRUD yêu cầu admin sở hữu tuyến (`Route.userId` = admin).
+
 ---
 
-## 6. Báo cáo sự cố tuyến (Route Report)
+## 6. Báo cáo sự cố tuyến (Route Report) — xem & xử lý
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
-| 21 | Tạo báo cáo | POST | `/api/route-reports/create` | Có |
-| 22 | Cập nhật báo cáo | PUT | `/api/route-reports/update/:id` | Có |
-| 23 | Xóa báo cáo | DELETE | `/api/route-reports/delete/:id` | Có |
-| 24 | Danh sách báo cáo (lọc status, type, userId) | POST | `/api/route-reports/listRouteReports` | Không |
-| 25 | Chi tiết báo cáo | GET | `/api/route-reports/detail/:id` | Có |
+| 21 | Danh sách báo cáo (lọc status, type, userId, tìm kiếm) | POST | `/api/route-reports/listRouteReports` | Không |
+| 22 | Chi tiết báo cáo | GET | `/api/route-reports/detail/:id` | Có |
+
+> Báo cáo do **user** gửi. Admin theo dõi qua danh sách và cập nhật `status` (nếu có quyền sửa báo cáo của user).
 
 ---
 
-## 7. Đánh giá tuyến (Review)
+## 7. Đánh giá tuyến (Review) — xem
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
-| 26 | Tạo đánh giá | POST | `/api/reviews/create` | Có |
-| 27 | Cập nhật đánh giá | PUT | `/api/reviews/update/:id` | Có |
-| 28 | Xóa đánh giá | DELETE | `/api/reviews/delete/:id` | Có |
-| 29 | Danh sách đánh giá | POST | `/api/reviews/listReviews` | Không |
-| 30 | Chi tiết đánh giá | GET | `/api/reviews/detail/:id` | Không |
+| 23 | Danh sách đánh giá | POST | `/api/reviews/listReviews` | Không |
+| 24 | Chi tiết đánh giá | GET | `/api/reviews/detail/:id` | Không |
 
 ---
 
-## 8. Tìm kiếm hành trình (Trip)
+## 8. Tìm kiếm hành trình (Trip) — xem / kiểm tra
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
-| 31 | Gợi ý địa điểm | POST | `/api/suggest-locations?keyword=...` | Không |
-| 32 | Tìm hành trình | POST | `/api/trips/search` | Không |
-| 33 | Chi tiết hành trình | POST | `/api/trips/detail` | Không |
+| 25 | Gợi ý địa điểm | POST | `/api/suggest-locations?keyword=...` | Không |
+| 26 | Tìm hành trình | POST | `/api/trips/search` | Không |
+| 27 | Chi tiết hành trình | POST | `/api/trips/detail` | Không |
 
 ---
 
-## 9. Phương thức thanh toán
-
-| # | Chức năng | Method | Endpoint | Auth |
-|---|-----------|--------|----------|------|
-| 34 | Thêm phương thức thanh toán | POST | `/api/payment-methods/create` | Có |
-| 35 | Cập nhật phương thức thanh toán | PUT | `/api/payment-methods/update/:id` | Có |
-| 36 | Xem phương thức thanh toán | GET | `/api/payment-methods/my-payment-methods` | Có |
-
----
-
-## 10. Vé xe (Ticket)
-
-| # | Chức năng | Method | Endpoint | Auth |
-|---|-----------|--------|----------|------|
-| 37 | Tạo vé | POST | `/api/tickets/create` | Có |
-| 38 | Quét / kiểm tra QR vé | POST | `/api/tickets/verify-scanned-qr` | Có |
-
----
-
-## 11. Quản lý người dùng — **chỉ admin**
+## 9. Quản lý người dùng — chỉ admin
 
 Middleware: `requireAdmin` — prefix `/api/admin`.
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
-| 39 | Danh sách user (phân trang, tìm full_name, lọc role / is_priority_user / active) | POST | `/api/admin/users/listUsers` | Admin |
-| 40 | Chi tiết một user | GET | `/api/admin/users/detail/:id` | Admin |
-| 41 | Bật / tắt trạng thái active của user (staff / user) | PUT | `/api/admin/users/updateActive/:id` | Admin |
-| 42 | Xóa user (không xóa admin, không xóa chính mình) | DELETE | `/api/admin/users/delete/:id` | Admin |
+| 28 | Danh sách user (phân trang, tìm full_name, lọc role / is_priority_user / active) | POST | `/api/admin/users/listUsers` | Admin |
+| 29 | Chi tiết một user | GET | `/api/admin/users/detail/:id` | Admin |
+| 30 | Bật / tắt trạng thái active (staff / user) | PUT | `/api/admin/users/updateActive/:id` | Admin |
+| 31 | Xóa user (không xóa admin, không xóa chính mình) | DELETE | `/api/admin/users/delete/:id` | Admin |
 
 **Ràng buộc:**
 - Không đổi `active` của tài khoản `role === 'admin'`.
@@ -132,49 +113,42 @@ Middleware: `requireAdmin` — prefix `/api/admin`.
 
 ---
 
-## 12. Dashboard thống kê — **chỉ admin**
+## 10. Dashboard thống kê — chỉ admin
 
 Middleware: `requireAdmin` — prefix `/api/admin/dashboard`.
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
-| 43 | Tổng hợp thống kê hệ thống | POST | `/api/admin/dashboard/summary` | Admin |
+| 32 | Tổng hợp thống kê hệ thống | POST | `/api/admin/dashboard/summary` | Admin |
 
-**Dữ liệu trả về gồm:**
-- Tổng users / posts / routes / routeReports / shiftReports / tickets / stops
-- Users theo role, active/inactive
-- Route reports theo status, type
-- Shift reports theo status, doanh thu, lượt quét
-- Tickets theo status
-- Time series theo khoảng thời gian (`from`, `to`, `granularity`: day/week/month)
-- Top tuyến có nhiều báo cáo nhất
+**Dữ liệu:** users, posts, routes, routeReports, shiftReports, tickets, stops, scanLogs, time series, top tuyến có nhiều báo cáo.
 
 ---
 
-## 13. Duyệt báo cáo ca làm việc — **chỉ admin**
+## 11. Duyệt báo cáo ca làm việc — chỉ admin
 
 Middleware: `requireAdmin` — prefix `/api/admin/shift-reports`.
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
-| 44 | Danh sách báo cáo ca (phân trang, lọc status, staffId) | POST | `/api/admin/shift-reports` | Admin |
-| 45 | Duyệt hoặc từ chối báo cáo ca (`approved` / `rejected`) | PATCH | `/api/admin/shift-reports/:reportId/review` | Admin |
+| 33 | Danh sách báo cáo ca (phân trang, lọc status, staffId) | POST | `/api/admin/shift-reports` | Admin |
+| 34 | Duyệt hoặc từ chối báo cáo ca (`approved` / `rejected`) | PATCH | `/api/admin/shift-reports/:reportId/review` | Admin |
 
 ---
 
-## 14. Hệ thống
+## 12. Hệ thống
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
-| 46 | Kiểm tra server hoạt động | GET | `/health` | Không |
+| 35 | Kiểm tra server hoạt động | GET | `/health` | Không |
 
 ---
 
-## Quyền bị hạn chế
+## Admin không có quyền (theo nghiệp vụ)
 
-Admin **không** gọi được API báo cáo ca của nhân viên:
-- `/api/shift-reports/preview`
-- `/api/shift-reports/submit`
-- `/api/shift-reports/my`
-
-(Các API này yêu cầu `role === 'staff'` — middleware `requireStaff`.)
+| Chức năng | Lý do |
+|-----------|--------|
+| Báo cáo ca staff (`preview` / `submit` / `my`) | Chỉ **staff** — middleware `requireStaff` |
+| Mua vé, quản lý payment method | Nghiệp vụ **user** |
+| Tạo đánh giá / báo cáo sự cố | Nghiệp vụ **user** gửi, admin xem xử lý |
+| Quét QR vé | Nghiệp vụ **staff** tại điểm vận hành |
