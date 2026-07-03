@@ -1,4 +1,4 @@
-const { body, param, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 const createPostRules = [
     body('title').trim().notEmpty().withMessage('Tiêu đề không được để trống'),
@@ -29,7 +29,7 @@ const listPostRules = [
     body('sort').optional().isIn(['newest', 'oldest']).withMessage('sort phải là newest hoặc oldest'),
 ];
 
-const idParamRule = param('id').isMongoId().withMessage('ID không hợp lệ');
+const idBodyRule = [body('id').isMongoId().withMessage('ID không hợp lệ')];
 
 function validate(req, res, next) {
     const errors = validationResult(req);
@@ -43,6 +43,6 @@ module.exports = {
     createPostRules,
     updatePostRules,
     listPostRules,
-    idParamRule,
+    idBodyRule,
     validate,
 };

@@ -1,4 +1,4 @@
-const { body, param, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 const createReviewRules = [
     body('routeId').isMongoId().withMessage('routeId không hợp lệ'),
@@ -27,7 +27,7 @@ const listReviewRules = [
     body('routeId').optional().isMongoId().withMessage('routeId không hợp lệ'),
 ];
 
-const idParamRule = param('id').isMongoId().withMessage('ID không hợp lệ');
+const idBodyRule = [body('id').isMongoId().withMessage('ID không hợp lệ')];
 
 function validate(req, res, next) {
     const errors = validationResult(req);
@@ -41,6 +41,6 @@ module.exports = {
     createReviewRules,
     updateReviewRules,
     listReviewRules,
-    idParamRule,
+    idBodyRule,
     validate,
 };
