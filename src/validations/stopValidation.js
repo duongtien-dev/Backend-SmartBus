@@ -1,9 +1,9 @@
-const { body, validationResult } = require('express-validator');
+﻿const { body } = require('express-validator');
 
 const createStopRules = [
-    body('routeId').isMongoId().withMessage('routeId không hợp lệ'),
-    body('stopId').trim().notEmpty().withMessage('stopId không được để trống'),
-    body('name').trim().notEmpty().withMessage('Tên điểm dừng không được để trống'),
+    body('routeId').isMongoId().withMessage('routeId khÃ´ng há»£p lá»‡'),
+    body('stopId').trim().notEmpty().withMessage('stopId khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng'),
+    body('name').trim().notEmpty().withMessage('TÃªn Ä‘iá»ƒm dá»«ng khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng'),
     body('location').optional(),
     body('location.type').optional().isIn(['Point']),
     body('location.coordinates').optional().isArray(),
@@ -12,8 +12,8 @@ const createStopRules = [
 ];
 
 const updateStopRules = [
-    body('stopId').optional().trim().notEmpty().withMessage('stopId không được để trống'),
-    body('name').optional().trim().notEmpty().withMessage('Tên điểm dừng không được để trống'),
+    body('stopId').optional().trim().notEmpty().withMessage('stopId khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng'),
+    body('name').optional().trim().notEmpty().withMessage('TÃªn Ä‘iá»ƒm dá»«ng khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng'),
     body('location').optional(),
     body('location.type').optional().isIn(['Point']),
     body('location.coordinates').optional().isArray(),
@@ -22,25 +22,16 @@ const updateStopRules = [
 ];
 
 const listStopsByRouteRules = [
-    body('routeId').isMongoId().withMessage('routeId không hợp lệ'),
+    body('routeId').isMongoId().withMessage('routeId khÃ´ng há»£p lá»‡'),
     body('page').optional().toInt().isInt({ min: 1 }),
     body('limit').optional().toInt().isInt({ min: 1, max: 200 }),
 ];
 
-const idBodyRule = [body('id').isMongoId().withMessage('ID không hợp lệ')];
-
-function validate(req, res, next) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ success: false, errors: errors.array() });
-    }
-    next();
-}
+const idBodyRule = [body('id').isMongoId().withMessage('ID khÃ´ng há»£p lá»‡')];
 
 module.exports = {
     createStopRules,
     updateStopRules,
     listStopsByRouteRules,
     idBodyRule,
-    validate,
 };

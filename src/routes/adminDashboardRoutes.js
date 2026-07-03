@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const auth = require('../middlewares/auth');
 const requireAdmin = require('../middlewares/requireAdmin');
 const dashboardController = require('../controllers/dashboardController');
@@ -11,7 +11,6 @@ router.use(requireAdmin);
 router.post(
     '/summary',
     dashboardValidation.summaryBodyRules,
-    dashboardValidation.validate,
     dashboardController.postSummary
 );
 

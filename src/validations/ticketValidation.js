@@ -1,4 +1,4 @@
-﻿const { body, validationResult } = require('express-validator');
+﻿const { body } = require('express-validator');
 
 const ticketTypeValues = ['single', 'monthlySingleRoute', 'monthlyInterRoute'];
 
@@ -38,19 +38,7 @@ const verifyScannedQrRules = [
         .withMessage('qrCode không hợp lệ')
 ];
 
-function validate(req, res, next) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({
-            success: false,
-            errors: errors.array()
-        });
-    }
-    return next();
-}
-
 module.exports = {
     createTicketRules,
     verifyScannedQrRules,
-    validate
 };

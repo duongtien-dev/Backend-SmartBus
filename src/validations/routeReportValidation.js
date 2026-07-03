@@ -1,12 +1,12 @@
-const { body, validationResult } = require('express-validator');
+﻿const { body } = require('express-validator');
 
 const createRouteReportRules = [
-    body('routeId').isMongoId().withMessage('routeId không hợp lệ'),
+    body('routeId').isMongoId().withMessage('routeId khÃ´ng há»£p lá»‡'),
     body('type')
         .optional()
         .isIn(['issue', 'suggestion', 'complaint', 'other'])
-        .withMessage('type phải là issue, suggestion, complaint hoặc other'),
-    body('content').trim().notEmpty().withMessage('Nội dung không được để trống'),
+        .withMessage('type pháº£i lÃ  issue, suggestion, complaint hoáº·c other'),
+    body('content').trim().notEmpty().withMessage('Ná»™i dung khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng'),
     body('phone').optional().trim(),
 ];
 
@@ -14,45 +14,36 @@ const updateRouteReportRules = [
     body('type')
         .optional()
         .isIn(['issue', 'suggestion', 'complaint', 'other'])
-        .withMessage('type phải là issue, suggestion, complaint hoặc other'),
-    body('content').optional().trim().notEmpty().withMessage('Nội dung không được để trống'),
+        .withMessage('type pháº£i lÃ  issue, suggestion, complaint hoáº·c other'),
+    body('content').optional().trim().notEmpty().withMessage('Ná»™i dung khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng'),
     body('phone').optional().trim(),
     body('status')
         .optional()
         .isIn(['new', 'in_progress', 'resolved', 'rejected'])
-        .withMessage('status phải là new, in_progress, resolved hoặc rejected'),
+        .withMessage('status pháº£i lÃ  new, in_progress, resolved hoáº·c rejected'),
 ];
 
 const listRouteReportRules = [
-    body('page').optional().toInt().isInt({ min: 1 }).withMessage('page phải là số nguyên dương'),
-    body('limit').optional().toInt().isInt({ min: 1, max: 100 }).withMessage('limit từ 1-100'),
+    body('page').optional().toInt().isInt({ min: 1 }).withMessage('page pháº£i lÃ  sá»‘ nguyÃªn dÆ°Æ¡ng'),
+    body('limit').optional().toInt().isInt({ min: 1, max: 100 }).withMessage('limit tá»« 1-100'),
     body('search').optional().trim(),
-    body('sort').optional().isIn(['newest', 'oldest']).withMessage('sort phải là newest hoặc oldest'),
-    body('userId').optional().isMongoId().withMessage('userId không hợp lệ'),
+    body('sort').optional().isIn(['newest', 'oldest']).withMessage('sort pháº£i lÃ  newest hoáº·c oldest'),
+    body('userId').optional().isMongoId().withMessage('userId khÃ´ng há»£p lá»‡'),
     body('status')
         .optional()
         .isIn(['new', 'in_progress', 'resolved', 'rejected'])
-        .withMessage('status không hợp lệ'),
+        .withMessage('status khÃ´ng há»£p lá»‡'),
     body('type')
         .optional()
         .isIn(['issue', 'suggestion', 'complaint', 'other'])
-        .withMessage('type không hợp lệ'),
+        .withMessage('type khÃ´ng há»£p lá»‡'),
 ];
 
-const idBodyRule = [body('id').isMongoId().withMessage('ID không hợp lệ')];
-
-function validate(req, res, next) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ success: false, errors: errors.array() });
-    }
-    next();
-}
+const idBodyRule = [body('id').isMongoId().withMessage('ID khÃ´ng há»£p lá»‡')];
 
 module.exports = {
     createRouteReportRules,
     updateRouteReportRules,
     listRouteReportRules,
     idBodyRule,
-    validate,
 };

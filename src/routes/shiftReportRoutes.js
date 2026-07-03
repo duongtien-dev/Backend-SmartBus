@@ -11,21 +11,18 @@ router.use(requireStaff);
 router.post(
     '/preview',
     shiftReportValidation.previewAndSubmitRules,
-    shiftReportValidation.validate,
     shiftReportController.previewShiftStats
 );
 
 router.post(
     '/submit',
     shiftReportValidation.previewAndSubmitRules,
-    shiftReportValidation.validate,
     shiftReportController.submitShiftReport
 );
 
 router.post(
     '/my',
     shiftReportValidation.myReportBodyRules,
-    shiftReportValidation.validate,
     shiftReportController.getMyShiftReports
 );
 

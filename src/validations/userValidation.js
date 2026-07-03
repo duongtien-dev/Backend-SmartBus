@@ -1,4 +1,4 @@
-const { body, param, validationResult } = require('express-validator');
+﻿const { body } = require('express-validator');
 
 const registerRules = [
     body('full_name').trim().notEmpty().withMessage('Họ tên không được để trống'),
@@ -52,14 +52,6 @@ const updateUserRules = [
     body('password').optional().isLength({ min: 6 }).withMessage('Mật khẩu phải có ít nhất 6 ký tự'),
 ];
 
-function validate(req, res, next) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ success: false, errors: errors.array() });
-    }
-    next();
-}
-
 module.exports = {
     registerRules,
     registerVerifyOtpRules,
@@ -67,5 +59,4 @@ module.exports = {
     forgotPasswordSendOtpRules,
     forgotPasswordResetRules,
     updateUserRules,
-    validate,
 };
