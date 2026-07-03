@@ -9,14 +9,14 @@ router.use(auth);
 router.use(requireAdmin);
 
 router.post(
-    '/',
+    '/list',
     shiftReportValidation.adminListBodyRules,
     shiftReportValidation.validate,
     shiftReportController.getAdminShiftReports
 );
 
-router.patch(
-    '/:reportId/review',
+router.post(
+    '/review',
     shiftReportValidation.reviewRules,
     shiftReportValidation.validate,
     shiftReportController.reviewShiftReport
