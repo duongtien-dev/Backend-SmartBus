@@ -9,14 +9,12 @@ router.use(auth);
 router.post(
     '/create',
     ticketValidation.createTicketRules,
-    ticketValidation.validate,
     ticketController.createTicket
 );
 
 router.post(
     '/verify-scanned-qr',
     ticketValidation.verifyScannedQrRules,
-    ticketValidation.validate,
     ticketController.verifyScannedQr
 );
 

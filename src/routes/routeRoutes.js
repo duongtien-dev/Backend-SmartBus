@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const router = express.Router();
 const routeController = require('../controllers/routeController');
 const routeValidation = require('../validations/routeValidation');
@@ -8,7 +8,6 @@ router.post(
     '/create',
     auth,
     routeValidation.createRouteRules,
-    routeValidation.validate,
     routeController.createRoute
 );
 
@@ -17,7 +16,6 @@ router.post(
     auth,
     ...routeValidation.idBodyRule,
     routeValidation.updateRouteRules,
-    routeValidation.validate,
     routeController.updateRoute
 );
 
@@ -25,21 +23,18 @@ router.post(
     '/delete',
     auth,
     ...routeValidation.idBodyRule,
-    routeValidation.validate,
     routeController.deleteRoute
 );
 
 router.post(
     '/listRoutes',
     routeValidation.listRouteRules,
-    routeValidation.validate,
     routeController.listRoutes
 );
 
 router.post(
     '/detail',
     ...routeValidation.idBodyRule,
-    routeValidation.validate,
     routeController.getRouteDetail
 );
 

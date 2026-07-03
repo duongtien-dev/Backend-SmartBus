@@ -1,4 +1,7 @@
 const express = require('express');
+const { patchAutoValidate } = require('./src/middlewares/validate');
+patchAutoValidate();
+
 const morgan = require('morgan');
 const cors = require('cors');
 const userRoutes = require('./src/routes/userRoutes');

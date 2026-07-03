@@ -11,14 +11,12 @@ router.use(requireAdmin);
 router.post(
     '/list',
     shiftReportValidation.adminListBodyRules,
-    shiftReportValidation.validate,
     shiftReportController.getAdminShiftReports
 );
 
 router.post(
     '/review',
     shiftReportValidation.reviewRules,
-    shiftReportValidation.validate,
     shiftReportController.reviewShiftReport
 );
 

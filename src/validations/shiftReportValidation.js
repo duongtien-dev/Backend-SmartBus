@@ -1,4 +1,4 @@
-﻿const { body, validationResult } = require('express-validator');
+﻿const { body } = require('express-validator');
 
 const shiftStatusValues = ['submitted', 'approved', 'rejected'];
 
@@ -43,21 +43,9 @@ const reviewRules = [
     body('reviewNote').optional().isString().withMessage('reviewNote phải là chuỗi').trim()
 ];
 
-function validate(req, res, next) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({
-            success: false,
-            errors: errors.array()
-        });
-    }
-    return next();
-}
-
 module.exports = {
     previewAndSubmitRules,
     myReportBodyRules,
     adminListBodyRules,
     reviewRules,
-    validate
 };

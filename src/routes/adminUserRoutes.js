@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const router = express.Router();
 const adminUserController = require('../controllers/adminUserController');
 const adminUserValidation = require('../validations/adminUserValidation');
@@ -11,14 +11,12 @@ router.use(requireAdmin);
 router.post(
     '/users/listUsers',
     adminUserValidation.listUserRules,
-    adminUserValidation.validate,
     adminUserController.getListUser
 );
 
 router.post(
     '/users/detail',
     ...adminUserValidation.idBodyRule,
-    adminUserValidation.validate,
     adminUserController.getUserDetail
 );
 
@@ -26,14 +24,12 @@ router.post(
     '/users/updateActive',
     ...adminUserValidation.idBodyRule,
     adminUserValidation.updateActiveRules,
-    adminUserValidation.validate,
     adminUserController.updateUserActive
 );
 
 router.post(
     '/users/delete',
     ...adminUserValidation.idBodyRule,
-    adminUserValidation.validate,
     adminUserController.deleteUser
 );
 
