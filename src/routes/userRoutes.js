@@ -39,7 +39,7 @@ router.post(
     userController.resetPasswordWithOtp
 );
 
-router.put(
+router.post(
     '/profile',
     auth,
     userValidation.updateUserRules,

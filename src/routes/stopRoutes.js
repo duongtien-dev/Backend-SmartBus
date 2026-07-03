@@ -12,19 +12,19 @@ router.post(
     stopController.createStop
 );
 
-router.put(
-    '/update/:id',
+router.post(
+    '/update',
     auth,
-    stopValidation.idParamRule,
+    ...stopValidation.idBodyRule,
     stopValidation.updateStopRules,
     stopValidation.validate,
     stopController.updateStop
 );
 
-router.delete(
-    '/delete/:id',
+router.post(
+    '/delete',
     auth,
-    stopValidation.idParamRule,
+    ...stopValidation.idBodyRule,
     stopValidation.validate,
     stopController.deleteStop
 );
@@ -36,9 +36,9 @@ router.post(
     stopController.listStopsByRoute
 );
 
-router.get(
-    '/detail/:id',
-    stopValidation.idParamRule,
+router.post(
+    '/detail',
+    ...stopValidation.idBodyRule,
     stopValidation.validate,
     stopController.getStopDetail
 );

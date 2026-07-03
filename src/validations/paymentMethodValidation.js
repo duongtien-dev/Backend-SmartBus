@@ -1,4 +1,4 @@
-const { body, param, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 const providerValues = ['momo', 'zalopay', 'shopeepay', 'visa', 'napas'];
 
@@ -35,7 +35,7 @@ const updatePaymentMethodRules = [
     body('email').optional({ nullable: true }).trim().isEmail().withMessage('Email không hợp lệ'),
 ];
 
-const idParamRule = param('id').isMongoId().withMessage('ID không hợp lệ');
+const idBodyRule = [body('id').isMongoId().withMessage('ID không hợp lệ')];
 
 function validate(req, res, next) {
     const errors = validationResult(req);
@@ -48,6 +48,6 @@ function validate(req, res, next) {
 module.exports = {
     createPaymentMethodRules,
     updatePaymentMethodRules,
-    idParamRule,
+    idBodyRule,
     validate,
 };

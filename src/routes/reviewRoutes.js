@@ -12,19 +12,19 @@ router.post(
     reviewController.createReview
 );
 
-router.put(
-    '/update/:id',
+router.post(
+    '/update',
     auth,
-    reviewValidation.idParamRule,
+    ...reviewValidation.idBodyRule,
     reviewValidation.updateReviewRules,
     reviewValidation.validate,
     reviewController.updateReview
 );
 
-router.delete(
-    '/delete/:id',
+router.post(
+    '/delete',
     auth,
-    reviewValidation.idParamRule,
+    ...reviewValidation.idBodyRule,
     reviewValidation.validate,
     reviewController.deleteReview
 );
@@ -36,9 +36,9 @@ router.post(
     reviewController.listReviews
 );
 
-router.get(
-    '/detail/:id',
-    reviewValidation.idParamRule,
+router.post(
+    '/detail',
+    ...reviewValidation.idBodyRule,
     reviewValidation.validate,
     reviewController.getReviewDetail
 );

@@ -11,7 +11,8 @@ async function createReview(req, res) {
 
 async function updateReview(req, res) {
     try {
-        const review = await reviewService.updateReview(req.params.id, req.user._id, req.body);
+        const { id, ...data } = req.body;
+        const review = await reviewService.updateReview(id, req.user._id, data);
         res.json({ success: true, data: review });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
@@ -20,7 +21,7 @@ async function updateReview(req, res) {
 
 async function deleteReview(req, res) {
     try {
-        await reviewService.deleteReview(req.params.id, req.user._id);
+        await reviewService.deleteReview(req.body.id, req.user._id);
         res.json({ success: true, message: 'Đã xóa đánh giá', data: null });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
@@ -45,7 +46,7 @@ async function listReviews(req, res) {
 
 async function getReviewDetail(req, res) {
     try {
-        const review = await reviewService.getReviewById(req.params.id);
+        const review = await reviewService.getReviewById(req.body.id);
         res.json({ success: true, data: review });
     } catch (err) {
         res.status(404).json({ success: false, message: err.message });

@@ -63,7 +63,8 @@ async function getAdminShiftReports(req, res) {
 
 async function reviewShiftReport(req, res) {
     try {
-        const report = await shiftReportService.reviewShiftReport(req.params.reportId, req.user._id, req.body);
+        const { reportId, ...payload } = req.body;
+        const report = await shiftReportService.reviewShiftReport(reportId, req.user._id, payload);
         return res.json({
             success: true,
             message: 'Cập nhật trạng thái báo cáo ca thành công',

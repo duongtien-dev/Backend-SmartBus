@@ -1,4 +1,4 @@
-﻿const { body, query, param, validationResult } = require('express-validator');
+﻿const { body, validationResult } = require('express-validator');
 
 const shiftStatusValues = ['submitted', 'approved', 'rejected'];
 
@@ -36,7 +36,7 @@ const adminListBodyRules = [
 ];
 
 const reviewRules = [
-    param('reportId').isMongoId().withMessage('reportId không hợp lệ'),
+    body('reportId').isMongoId().withMessage('reportId không hợp lệ'),
     body('status')
         .isIn(['approved', 'rejected'])
         .withMessage('status phải là approved hoặc rejected'),

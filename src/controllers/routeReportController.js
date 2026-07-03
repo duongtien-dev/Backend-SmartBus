@@ -11,10 +11,11 @@ async function createRouteReport(req, res) {
 
 async function updateRouteReport(req, res) {
     try {
+        const { id, ...data } = req.body;
         const report = await routeReportService.updateRouteReport(
-            req.params.id,
+            id,
             req.user._id,
-            req.body
+            data
         );
         res.json({ success: true, data: report });
     } catch (err) {
@@ -24,7 +25,7 @@ async function updateRouteReport(req, res) {
 
 async function deleteRouteReport(req, res) {
     try {
-        await routeReportService.deleteRouteReport(req.params.id, req.user._id);
+        await routeReportService.deleteRouteReport(req.body.id, req.user._id);
         res.json({ success: true, message: 'Đã xóa báo cáo', data: null });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
@@ -51,7 +52,7 @@ async function listRouteReports(req, res) {
 
 async function getRouteReportDetail(req, res) {
     try {
-        const report = await routeReportService.getRouteReportById(req.params.id);
+        const report = await routeReportService.getRouteReportById(req.body.id);
         res.json({ success: true, data: report });
     } catch (err) {
         res.status(404).json({ success: false, message: err.message });

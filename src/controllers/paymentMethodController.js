@@ -11,10 +11,11 @@ async function createPaymentMethod(req, res) {
 
 async function updatePaymentMethod(req, res) {
     try {
+        const { id, ...data } = req.body;
         const paymentMethod = await paymentMethodService.updatePaymentMethod(
-            req.params.id,
+            id,
             req.user._id,
-            req.body
+            data
         );
         res.json({ success: true, data: paymentMethod });
     } catch (err) {

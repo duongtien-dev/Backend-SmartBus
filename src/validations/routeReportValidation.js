@@ -1,4 +1,4 @@
-const { body, param, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 const createRouteReportRules = [
     body('routeId').isMongoId().withMessage('routeId không hợp lệ'),
@@ -39,7 +39,7 @@ const listRouteReportRules = [
         .withMessage('type không hợp lệ'),
 ];
 
-const idParamRule = param('id').isMongoId().withMessage('ID không hợp lệ');
+const idBodyRule = [body('id').isMongoId().withMessage('ID không hợp lệ')];
 
 function validate(req, res, next) {
     const errors = validationResult(req);
@@ -53,6 +53,6 @@ module.exports = {
     createRouteReportRules,
     updateRouteReportRules,
     listRouteReportRules,
-    idParamRule,
+    idBodyRule,
     validate,
 };

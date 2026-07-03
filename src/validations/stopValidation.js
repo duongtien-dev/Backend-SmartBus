@@ -1,4 +1,4 @@
-const { body, param, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 const createStopRules = [
     body('routeId').isMongoId().withMessage('routeId không hợp lệ'),
@@ -27,7 +27,7 @@ const listStopsByRouteRules = [
     body('limit').optional().toInt().isInt({ min: 1, max: 200 }),
 ];
 
-const idParamRule = param('id').isMongoId().withMessage('ID không hợp lệ');
+const idBodyRule = [body('id').isMongoId().withMessage('ID không hợp lệ')];
 
 function validate(req, res, next) {
     const errors = validationResult(req);
@@ -41,6 +41,6 @@ module.exports = {
     createStopRules,
     updateStopRules,
     listStopsByRouteRules,
-    idParamRule,
+    idBodyRule,
     validate,
 };

@@ -2,7 +2,7 @@ const { searchPlaces } = require('../services/suggestLocation');
 
 async function suggestLocations(req, res) {
     try {
-        const keyword = String(req.query.keyword || '').trim();
+        const keyword = String(req.body.keyword || req.query.keyword || '').trim();
         if (!keyword) {
             return res.status(400).json({ success: false, message: 'keyword is required' });
         }

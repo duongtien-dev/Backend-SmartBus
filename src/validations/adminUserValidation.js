@@ -1,4 +1,4 @@
-const { body, param, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 const listUserRules = [
     body('page').optional().toInt().isInt({ min: 1 }).withMessage('page phải là số nguyên dương'),
@@ -16,7 +16,7 @@ const updateActiveRules = [
     body('active').isBoolean().withMessage('active phải là true hoặc false'),
 ];
 
-const idParamRule = param('id').isMongoId().withMessage('ID không hợp lệ');
+const idBodyRule = [body('id').isMongoId().withMessage('ID không hợp lệ')];
 
 function validate(req, res, next) {
     const errors = validationResult(req);
@@ -29,6 +29,6 @@ function validate(req, res, next) {
 module.exports = {
     listUserRules,
     updateActiveRules,
-    idParamRule,
+    idBodyRule,
     validate,
 };

@@ -12,19 +12,19 @@ router.post(
     routeReportController.createRouteReport
 );
 
-router.put(
-    '/update/:id',
+router.post(
+    '/update',
     auth,
-    routeReportValidation.idParamRule,
+    ...routeReportValidation.idBodyRule,
     routeReportValidation.updateRouteReportRules,
     routeReportValidation.validate,
     routeReportController.updateRouteReport
 );
 
-router.delete(
-    '/delete/:id',
+router.post(
+    '/delete',
     auth,
-    routeReportValidation.idParamRule,
+    ...routeReportValidation.idBodyRule,
     routeReportValidation.validate,
     routeReportController.deleteRouteReport
 );
@@ -36,10 +36,10 @@ router.post(
     routeReportController.listRouteReports
 );
 
-router.get(
-    '/detail/:id',
+router.post(
+    '/detail',
     auth,
-    routeReportValidation.idParamRule,
+    ...routeReportValidation.idBodyRule,
     routeReportValidation.validate,
     routeReportController.getRouteReportDetail
 );
