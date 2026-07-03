@@ -51,7 +51,7 @@ app.use('/api/tickets', ticketRoutes);
 app.use('/api/shift-reports', shiftReportRoutes);
 app.use('/api/admin/shift-reports', adminShiftReportRoutes);
 
-app.post('/health', (req, res) => {
+app.get('/health', (req, res) => {
     res.json({ success: true, message: 'OK' });
 });
 
