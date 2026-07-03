@@ -11,7 +11,8 @@ async function createPost(req, res) {
 
 async function updatePost(req, res) {
     try {
-        const post = await postService.updatePost(req.params.id, req.user._id, req.body);
+        const { id, ...data } = req.body;
+        const post = await postService.updatePost(id, req.user._id, data);
         res.json({ success: true, data: post });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
@@ -20,7 +21,7 @@ async function updatePost(req, res) {
 
 async function deletePost(req, res) {
     try {
-        await postService.deletePost(req.params.id, req.user._id);
+        await postService.deletePost(req.body.id, req.user._id);
         res.json({ success: true, message: 'Đã xóa bài viết', data: null });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
@@ -44,7 +45,7 @@ async function listPosts(req, res) {
 
 async function getPostDetail(req, res) {
     try {
-        const post = await postService.getPostById(req.params.id);
+        const post = await postService.getPostById(req.body.id);
         res.json({ success: true, data: post });
     } catch (err) {
         res.status(404).json({ success: false, message: err.message });

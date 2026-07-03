@@ -19,7 +19,7 @@ async function getListUser(req, res) {
 
 async function getUserDetail(req, res) {
     try {
-        const user = await adminUserService.getUserById(req.params.id);
+        const user = await adminUserService.getUserById(req.body.id);
         res.json({ success: true, data: user });
     } catch (err) {
         res.status(404).json({ success: false, message: err.message });
@@ -28,7 +28,7 @@ async function getUserDetail(req, res) {
 
 async function updateUserActive(req, res) {
     try {
-        const user = await adminUserService.updateUserActive(req.params.id, req.body.active);
+        const user = await adminUserService.updateUserActive(req.body.id, req.body.active);
         res.json({ success: true, data: user });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
@@ -37,7 +37,7 @@ async function updateUserActive(req, res) {
 
 async function deleteUser(req, res) {
     try {
-        await adminUserService.deleteUserById(req.params.id, req.user._id);
+        await adminUserService.deleteUserById(req.body.id, req.user._id);
         res.json({ success: true, message: 'Đã xóa tài khoản', data: null });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });

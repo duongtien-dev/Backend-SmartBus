@@ -11,7 +11,8 @@ async function createRoute(req, res) {
 
 async function updateRoute(req, res) {
     try {
-        const route = await routeService.updateRoute(req.params.id, req.user._id, req.body);
+        const { id, ...data } = req.body;
+        const route = await routeService.updateRoute(id, req.user._id, data);
         res.json({ success: true, data: route });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
@@ -20,7 +21,7 @@ async function updateRoute(req, res) {
 
 async function deleteRoute(req, res) {
     try {
-        await routeService.deleteRoute(req.params.id, req.user._id);
+        await routeService.deleteRoute(req.body.id, req.user._id);
         res.json({ success: true, message: 'Đã xóa tuyến', data: null });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
@@ -45,7 +46,7 @@ async function listRoutes(req, res) {
 
 async function getRouteDetail(req, res) {
     try {
-        const route = await routeService.getRouteById(req.params.id);
+        const route = await routeService.getRouteById(req.body.id);
         res.json({ success: true, data: route });
     } catch (err) {
         res.status(404).json({ success: false, message: err.message });

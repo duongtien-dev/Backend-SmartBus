@@ -11,7 +11,8 @@ async function createStop(req, res) {
 
 async function updateStop(req, res) {
     try {
-        const stop = await stopService.updateStop(req.params.id, req.user._id, req.body);
+        const { id, ...data } = req.body;
+        const stop = await stopService.updateStop(id, req.user._id, data);
         res.json({ success: true, data: stop });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
@@ -20,7 +21,7 @@ async function updateStop(req, res) {
 
 async function deleteStop(req, res) {
     try {
-        await stopService.deleteStop(req.params.id, req.user._id);
+        await stopService.deleteStop(req.body.id, req.user._id);
         res.json({ success: true, message: 'Đã xóa điểm dừng', data: null });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
@@ -43,7 +44,7 @@ async function listStopsByRoute(req, res) {
 
 async function getStopDetail(req, res) {
     try {
-        const stop = await stopService.getStopById(req.params.id);
+        const stop = await stopService.getStopById(req.body.id);
         res.json({ success: true, data: stop });
     } catch (err) {
         res.status(404).json({ success: false, message: err.message });
