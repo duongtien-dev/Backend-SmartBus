@@ -10,7 +10,7 @@ function validate(req, res, next) {
 }
 
 /** Tự gắn validate trước handler cuối của mọi router.post */
-function patchAutoValidate() {
+function autoValidate() {
     const { Router } = require('express');
     const originalPost = Router.prototype.post;
 
@@ -25,5 +25,5 @@ function patchAutoValidate() {
 
 module.exports = {
     validate,
-    patchAutoValidate,
+    autoValidate,
 };

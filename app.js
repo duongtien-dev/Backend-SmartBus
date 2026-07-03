@@ -1,6 +1,5 @@
 const express = require('express');
-const { patchAutoValidate } = require('./src/middlewares/validate');
-patchAutoValidate();
+const { autoValidate } = require('./src/middlewares/validate');
 
 const morgan = require('morgan');
 const cors = require('cors');
@@ -21,6 +20,7 @@ const adminShiftReportRoutes = require('./src/routes/adminShiftReportRoutes');
 const adminDashboardRoutes = require('./src/routes/adminDashboardRoutes');
 const app = express();
 
+autoValidate();
 app.use(express.json());
 app.use(morgan('dev'));
 
