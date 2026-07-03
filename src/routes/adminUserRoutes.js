@@ -15,24 +15,24 @@ router.post(
     adminUserController.getListUser
 );
 
-router.get(
-    '/users/detail/:id',
-    adminUserValidation.idParamRule,
+router.post(
+    '/users/detail',
+    ...adminUserValidation.idBodyRule,
     adminUserValidation.validate,
     adminUserController.getUserDetail
 );
 
-router.put(
-    '/users/updateActive/:id',
-    adminUserValidation.idParamRule,
+router.post(
+    '/users/updateActive',
+    ...adminUserValidation.idBodyRule,
     adminUserValidation.updateActiveRules,
     adminUserValidation.validate,
     adminUserController.updateUserActive
 );
 
-router.delete(
-    '/users/delete/:id',
-    adminUserValidation.idParamRule,
+router.post(
+    '/users/delete',
+    ...adminUserValidation.idBodyRule,
     adminUserValidation.validate,
     adminUserController.deleteUser
 );

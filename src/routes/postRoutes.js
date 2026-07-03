@@ -5,26 +5,26 @@ const postValidation = require('../validations/postValidation');
 const auth = require('../middlewares/auth');
 
 router.post(
-    '/',
+    '/create',
     auth,
     postValidation.createPostRules,
     postValidation.validate,
     postController.createPost
 );
 
-router.put(
-    '/:id',
+router.post(
+    '/update',
     auth,
-    postValidation.idParamRule,
+    ...postValidation.idBodyRule,
     postValidation.updatePostRules,
     postValidation.validate,
     postController.updatePost
 );
 
-router.delete(
-    '/:id',
+router.post(
+    '/delete',
     auth,
-    postValidation.idParamRule,
+    ...postValidation.idBodyRule,
     postValidation.validate,
     postController.deletePost
 );
@@ -36,9 +36,9 @@ router.post(
     postController.listPosts
 );
 
-router.get(
-    '/:id',
-    postValidation.idParamRule,
+router.post(
+    '/detail',
+    ...postValidation.idBodyRule,
     postValidation.validate,
     postController.getPostDetail
 );
