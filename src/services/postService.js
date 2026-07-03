@@ -6,6 +6,7 @@ async function createPost(userId, data) {
 }
 
 async function updatePost(postId, userId, data) {
+    // console.log(postId, userId, data);
     const post = await Post.findOne({ _id: postId, user: userId });
     if (!post) throw new Error('Bài viết không tồn tại hoặc không có quyền sửa');
     const { user, ...allowed } = data;
