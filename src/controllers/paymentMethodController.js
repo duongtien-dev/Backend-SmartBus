@@ -32,8 +32,21 @@ async function getMyPaymentMethods(req, res) {
     }
 }
 
+async function getPaymentMethodById(req, res) {
+    try {
+        const paymentMethod = await paymentMethodService.getPaymentMethodById(
+            req.body.id,
+            req.user._id
+        );
+        res.json({ success: true, data: paymentMethod });
+    } catch (err) {
+        res.status(404).json({ success: false, message: err.message });
+    }
+}
+
 module.exports = {
     createPaymentMethod,
     updatePaymentMethod,
     getMyPaymentMethods,
+    getPaymentMethodById,
 };
