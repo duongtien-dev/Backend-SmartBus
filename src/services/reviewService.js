@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const Review = require('../models/Review');
 
 async function createReview(userId, data) {
+    const existing = await Review.findOne({ userId, routeId: data.routeId });
+    if (existing) {
+        throw new Error('Bạn đã đánh giá tuyến này');
+    }
+
     const review = await Review.create({ ...data, userId });
     return review;
 }
@@ -21,9 +26,10 @@ async function deleteReview(reviewId, userId) {
     return true;
 }
 
-async function listReviews({ page = 1, limit = 10, rating, sort = 'newest', routeId }) {
+async function listReviews({ page = 1, limit = 10, rating, sort = 'newest', routeId, userId }) {
     const query = {};
     if (routeId) query.routeId = routeId;
+    if (userId) query.userId = userId;
     if (rating != null && rating !== '') {
         const r = Number(rating);
         if (r >= 1 && r <= 5) query.rating = r;

@@ -25,6 +25,7 @@ const listReviewRules = [
         .withMessage('rating pháº£i tá»« 1 Ä‘áº¿n 5'),
     body('sort').optional().isIn(['newest', 'oldest']).withMessage('sort pháº£i lÃ  newest hoáº·c oldest'),
     body('routeId').optional().isMongoId().withMessage('routeId khÃ´ng há»£p lá»‡'),
+    body('userId').optional().isMongoId().withMessage('userId khÃ´ng há»£p lá»‡'),
 ];
 
 const reviewSummaryRules = [

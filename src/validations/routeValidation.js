@@ -33,6 +33,7 @@ const listRouteRules = [
     body('search').optional().trim(),
     body('sort').optional().isIn(['newest', 'oldest']).withMessage('sort pháº£i lÃ  newest hoáº·c oldest'),
     body('userId').optional().isMongoId().withMessage('userId khÃ´ng há»£p lá»‡'),
+    body('unreviewedOnly').optional().isBoolean().withMessage('unreviewedOnly pháº£i lÃ  boolean'),
 ];
 
 const idBodyRule = [body('id').isMongoId().withMessage('ID khÃ´ng há»£p lá»‡')];

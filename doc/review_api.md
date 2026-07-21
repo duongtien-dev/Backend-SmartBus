@@ -129,6 +129,7 @@ Không cần body.
 | rating | Không | Lọc theo số sao: 1, 2, 3, 4 hoặc 5 |
 | sort | Không | `"newest"` (mới trước) hoặc `"oldest"` (cũ trước) |
 | routeId | Không | Chỉ lấy đánh giá của tuyến có id này |
+| userId | Không | Chỉ lấy đánh giá của user có id này (phải trùng token đăng nhập) |
 
 ---
 
