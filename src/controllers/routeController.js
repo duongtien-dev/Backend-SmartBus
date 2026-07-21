@@ -30,15 +30,24 @@ async function deleteRoute(req, res) {
 
 async function listRoutes(req, res) {
     try {
-        const { page, limit, search, sort, userId } = req.body;
+        const { page, limit, search, sort, userId, unreviewedOnly } = req.body;
+
+        if (unreviewedOnly && !req.user) {
+            return res.status(401).json({
+                success: false,
+                message: 'Cần đăng nhập để xem tuyến chưa đánh giá',
+            });
+        }
+
         const result = await routeService.listRoutes({
             page: Number(page) || 1,
             limit: Number(limit) || 10,
             search,
             sort: sort || 'newest',
-            // Chỉ lọc theo owner khi client gửi userId tường minh
             userId: userId || undefined,
             viewerId: req.user?._id,
+            unreviewedOnly: Boolean(unreviewedOnly),
+            travelerUserId: unreviewedOnly ? req.user._id : undefined,
         });
         res.json({ success: true, data: result });
     } catch (err) {

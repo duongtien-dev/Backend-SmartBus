@@ -76,6 +76,7 @@
 | 20 | Cập nhật đánh giá (chỉ đánh giá của mình) | PUT | `/api/reviews/update/:id` | Có |
 | 21 | Xóa đánh giá (chỉ đánh giá của mình) | DELETE | `/api/reviews/delete/:id` | Có |
 | 22 | Danh sách đánh giá (phân trang, lọc rating/routeId, sắp xếp) | POST | `/api/reviews/listReviews` | Không |
+| 22a | Tổng hợp đánh giá theo tuyến | POST | `/api/reviews/summary` | Không |
 | 23 | Chi tiết một đánh giá | GET | `/api/reviews/detail/:id` | Không |
 
 ---

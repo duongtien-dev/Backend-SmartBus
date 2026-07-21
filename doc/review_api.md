@@ -13,6 +13,7 @@
 | PUT | /update/:id | Có | Cập nhật đánh giá |
 | DELETE | /delete/:id | Có | Xóa đánh giá |
 | POST | /listReviews | Không | Danh sách đánh giá (phân trang, lọc rating, sort ngày, lọc theo tuyến) |
+| POST | /summary | Không | Tổng hợp đánh giá theo tuyến (average, total, distribution) |
 | GET | /detail/:id | Không | Chi tiết một đánh giá |
 
 ---
@@ -128,10 +129,44 @@ Không cần body.
 | rating | Không | Lọc theo số sao: 1, 2, 3, 4 hoặc 5 |
 | sort | Không | `"newest"` (mới trước) hoặc `"oldest"` (cũ trước) |
 | routeId | Không | Chỉ lấy đánh giá của tuyến có id này |
+| userId | Không | Chỉ lấy đánh giá của user có id này (phải trùng token đăng nhập) |
 
 ---
 
-## 5. Chi tiết đánh giá – GET /api/reviews/detail/:id
+## 5. Tổng hợp đánh giá – POST /api/reviews/summary
+
+**Headers:** `Content-Type: application/json`
+
+**Body:**
+
+```json
+{
+  "routeId": "674000000000000000000001"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "average": 4.1,
+    "total": 10,
+    "distribution": {
+      "1": 0,
+      "2": 1,
+      "3": 2,
+      "4": 3,
+      "5": 4
+    }
+  }
+}
+```
+
+---
+
+## 6. Chi tiết đánh giá – GET /api/reviews/detail/:id
 
 **Params:** `id` = ObjectId của review
 

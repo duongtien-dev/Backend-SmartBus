@@ -33,6 +33,12 @@ router.post(
 );
 
 router.post(
+    '/summary',
+    reviewValidation.reviewSummaryRules,
+    reviewController.getReviewSummary
+);
+
+router.post(
     '/detail',
     ...reviewValidation.idBodyRule,
     reviewController.getReviewDetail

@@ -30,13 +30,22 @@ async function deleteReview(req, res) {
 
 async function listReviews(req, res) {
     try {
-        const { page, limit, rating, sort, routeId } = req.body;
+        const { page, limit, rating, sort, routeId, userId } = req.body;
+
+        if (userId && req.user && String(req.user._id) !== String(userId)) {
+            return res.status(403).json({
+                success: false,
+                message: 'Không có quyền xem đánh giá của người khác',
+            });
+        }
+
         const result = await reviewService.listReviews({
             page: Number(page) || 1,
             limit: Number(limit) || 10,
             rating: rating != null ? rating : undefined,
             sort: sort || 'newest',
             routeId: routeId || undefined,
+            userId: userId || undefined,
         });
         res.json({ success: true, data: result });
     } catch (err) {
@@ -53,10 +62,21 @@ async function getReviewDetail(req, res) {
     }
 }
 
+async function getReviewSummary(req, res) {
+    try {
+        const { routeId } = req.body;
+        const summary = await reviewService.getReviewSummary(routeId);
+        res.json({ success: true, data: summary });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+}
+
 module.exports = {
     createReview,
     updateReview,
     deleteReview,
     listReviews,
     getReviewDetail,
+    getReviewSummary,
 };
