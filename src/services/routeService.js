@@ -1,4 +1,5 @@
 const Route = require('../models/Route');
+const favoriteRouteService = require('./favoriteRouteService');
 
 async function createRoute(userId, data) {
     const { ...routeData } = data;
@@ -25,7 +26,33 @@ async function deleteRoute(routeId, userId) {
     return route;
 }
 
-async function listRoutes({ page = 1, limit = 10, search, sort = 'newest', userId }) {
+async function attachFavoriteFlag(routes, viewerId) {
+    if (!viewerId || !routes.length) {
+        return routes.map((route) => ({
+            ...route,
+            isFavorite: false,
+        }));
+    }
+
+    const favoritedIds = await favoriteRouteService.getFavoritedRouteIdSet(
+        viewerId,
+        routes.map((route) => route._id)
+    );
+
+    return routes.map((route) => ({
+        ...route,
+        isFavorite: favoritedIds.has(String(route._id)),
+    }));
+}
+
+async function listRoutes({
+    page = 1,
+    limit = 10,
+    search,
+    sort = 'newest',
+    userId,
+    viewerId,
+}) {
     const query = {};
     if (userId) query.userId = userId;
     if (search && search.trim()) {
@@ -42,26 +69,26 @@ async function listRoutes({ page = 1, limit = 10, search, sort = 'newest', userI
     const sortOpt = sort === 'oldest' ? { createdAt: 1 } : { createdAt: -1 };
     const skip = (page - 1) * limit;
 
-    const [routes] = await Promise.all([
-        Route.find(query)
-            .sort(sortOpt)
-            .skip(skip)
-            .limit(limit)
-            .populate('userId', 'full_name email')
-            .populate('staffId', 'full_name email')
-            .lean(),
-    ]);
+    const routes = await Route.find(query)
+        .sort(sortOpt)
+        .skip(skip)
+        .limit(limit)
+        .populate('userId', 'full_name email')
+        .populate('staffId', 'full_name email')
+        .lean();
 
-    return routes;
+    return attachFavoriteFlag(routes, viewerId);
 }
 
-async function getRouteById(routeId) {
+async function getRouteById(routeId, viewerId) {
     const route = await Route.findById(routeId)
         .populate('userId', 'full_name email')
         .populate('staffId', 'full_name email')
         .lean();
     if (!route) throw new Error('Tuyến không tồn tại');
-    return route;
+
+    const [withFavorite] = await attachFavoriteFlag([route], viewerId);
+    return withFavorite;
 }
 
 module.exports = {

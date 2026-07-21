@@ -3,6 +3,7 @@ const router = express.Router();
 const routeController = require('../controllers/routeController');
 const routeValidation = require('../validations/routeValidation');
 const auth = require('../middlewares/auth');
+const optionalAuth = require('../middlewares/optionalAuth');
 
 router.post(
     '/create',
@@ -28,12 +29,14 @@ router.post(
 
 router.post(
     '/listRoutes',
+    optionalAuth,
     routeValidation.listRouteRules,
     routeController.listRoutes
 );
 
 router.post(
     '/detail',
+    optionalAuth,
     ...routeValidation.idBodyRule,
     routeController.getRouteDetail
 );
