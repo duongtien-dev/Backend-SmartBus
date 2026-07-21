@@ -27,11 +27,16 @@ const listReviewRules = [
     body('routeId').optional().isMongoId().withMessage('routeId khÃ´ng há»£p lá»‡'),
 ];
 
+const reviewSummaryRules = [
+    body('routeId').isMongoId().withMessage('routeId khÃ´ng há»£p lá»‡'),
+];
+
 const idBodyRule = [body('id').isMongoId().withMessage('ID khÃ´ng há»£p lá»‡')];
 
 module.exports = {
     createReviewRules,
     updateReviewRules,
     listReviewRules,
+    reviewSummaryRules,
     idBodyRule,
 };

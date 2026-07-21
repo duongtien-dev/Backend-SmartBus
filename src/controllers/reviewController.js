@@ -53,10 +53,21 @@ async function getReviewDetail(req, res) {
     }
 }
 
+async function getReviewSummary(req, res) {
+    try {
+        const { routeId } = req.body;
+        const summary = await reviewService.getReviewSummary(routeId);
+        res.json({ success: true, data: summary });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+}
+
 module.exports = {
     createReview,
     updateReview,
     deleteReview,
     listReviews,
     getReviewDetail,
+    getReviewSummary,
 };
