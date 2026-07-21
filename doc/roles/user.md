@@ -39,8 +39,11 @@
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
-| 10 | Danh sách tuyến (phân trang, tìm kiếm, sắp xếp) | POST | `/api/routes/listRoutes` | Không |
-| 11 | Chi tiết một tuyến | GET | `/api/routes/detail/:id` | Không |
+| 10 | Danh sách tuyến (phân trang, tìm kiếm, sắp xếp; có token thì kèm `isFavorite`) | POST | `/api/routes/listRoutes` | Không |
+| 11 | Chi tiết một tuyến | POST | `/api/routes/detail` | Không |
+| 11a | Thêm tuyến yêu thích | POST | `/api/route-favorites/add` | Có |
+| 11b | Bỏ tuyến yêu thích | POST | `/api/route-favorites/remove` | Có |
+| 11c | Danh sách tuyến yêu thích | POST | `/api/route-favorites/listFavorites` | Có |
 
 ---
 

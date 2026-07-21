@@ -36,7 +36,9 @@ async function listRoutes(req, res) {
             limit: Number(limit) || 10,
             search,
             sort: sort || 'newest',
-            userId: userId || req.user?._id,
+            // Chỉ lọc theo owner khi client gửi userId tường minh
+            userId: userId || undefined,
+            viewerId: req.user?._id,
         });
         res.json({ success: true, data: result });
     } catch (err) {
@@ -46,7 +48,10 @@ async function listRoutes(req, res) {
 
 async function getRouteDetail(req, res) {
     try {
-        const route = await routeService.getRouteById(req.body.id);
+        const route = await routeService.getRouteById(
+            req.body.id,
+            req.user?._id
+        );
         res.json({ success: true, data: route });
     } catch (err) {
         res.status(404).json({ success: false, message: err.message });

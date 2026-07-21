@@ -30,8 +30,22 @@ async function getMyPaymentMethods(userId) {
     return paymentMethods;
 }
 
+async function getPaymentMethodById(paymentMethodId, userId) {
+    const paymentMethod = await PaymentMethod.findOne({
+        _id: paymentMethodId,
+        user: userId,
+    });
+
+    if (!paymentMethod) {
+        throw new Error('Phương thức thanh toán không tồn tại hoặc không có quyền xem');
+    }
+
+    return paymentMethod;
+}
+
 module.exports = {
     createPaymentMethod,
     updatePaymentMethod,
     getMyPaymentMethods,
+    getPaymentMethodById,
 };

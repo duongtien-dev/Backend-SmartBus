@@ -24,4 +24,10 @@ router.post(
     paymentMethodController.getMyPaymentMethods
 );
 
+router.post(
+    '/detail',
+    ...paymentMethodValidation.idBodyRule,
+    paymentMethodController.getPaymentMethodById
+);
+
 module.exports = router;
