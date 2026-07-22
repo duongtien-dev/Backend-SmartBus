@@ -62,11 +62,17 @@ const myTicketsBodyRules = [
         .toBoolean()
 ];
 
+const historyBodyRules = [
+    body('page').optional().toInt().isInt({ min: 1 }).withMessage('page phải >= 1'),
+    body('limit').optional().toInt().isInt({ min: 1, max: 20 }).withMessage('limit phải từ 1 đến 20')
+];
+
 const idBodyRule = [body('id').isMongoId().withMessage('ID không hợp lệ')];
 
 module.exports = {
     createTicketRules,
     verifyScannedQrRules,
     myTicketsBodyRules,
+    historyBodyRules,
     idBodyRule,
 };

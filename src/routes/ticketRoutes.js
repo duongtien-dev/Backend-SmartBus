@@ -30,4 +30,10 @@ router.post(
     ticketController.getTicketDetail
 );
 
+router.post(
+    '/history',
+    ticketValidation.historyBodyRules,
+    ticketController.getMyTripHistory
+);
+
 module.exports = router;

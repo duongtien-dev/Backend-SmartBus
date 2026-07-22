@@ -213,6 +213,48 @@ async function getMyTickets(userId, payload = {}) {
     return { items, page, limit, total };
 }
 
+function startOfToday() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+}
+
+async function getMyTripHistory(userId, payload = {}) {
+    const page = Math.max(Number(payload.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(payload.limit) || 10, 1), 100);
+    const skip = (page - 1) * limit;
+    const today = startOfToday();
+
+    const filter = {
+        user: userId,
+        status: { $ne: 'cancelled' },
+        $or: [
+            { status: 'used' },
+            { status: 'expired' },
+            { usedAt: { $ne: null } },
+            {
+                ticketType: 'single',
+                departureDate: { $lt: today }
+            },
+            {
+                ticketType: { $in: ['monthlySingleRoute', 'monthlyInterRoute'] },
+                expiryDate: { $lt: new Date() }
+            }
+        ]
+    };
+
+    const [items, total] = await Promise.all([
+        Ticket.find(filter)
+            .select(TICKET_LIST_SELECT)
+            .sort({ usedAt: -1, departureDate: -1, createdAt: -1 })
+            .skip(skip)
+            .limit(limit),
+        Ticket.countDocuments(filter)
+    ]);
+
+    return { items, page, limit, total };
+}
+
 async function getTicketById(ticketId, userId) {
     const ticket = await Ticket.findOne({
         _id: ticketId,
@@ -232,5 +274,6 @@ module.exports = {
     createTicket,
     verifyScannedQr,
     getMyTickets,
+    getMyTripHistory,
     getTicketById
 };
