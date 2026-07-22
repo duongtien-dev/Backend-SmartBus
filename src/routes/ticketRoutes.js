@@ -18,4 +18,22 @@ router.post(
     ticketController.verifyScannedQr
 );
 
+router.post(
+    '/my',
+    ticketValidation.myTicketsBodyRules,
+    ticketController.getMyTickets
+);
+
+router.post(
+    '/detail',
+    ...ticketValidation.idBodyRule,
+    ticketController.getTicketDetail
+);
+
+router.post(
+    '/history',
+    ticketValidation.historyBodyRules,
+    ticketController.getMyTripHistory
+);
+
 module.exports = router;

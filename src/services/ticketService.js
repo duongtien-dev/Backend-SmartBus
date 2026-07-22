@@ -165,7 +165,115 @@ async function verifyScannedQr(scannerUserId, data) {
     };
 }
 
+const TICKET_LIST_SELECT =
+    '_id routeId routeName startStopName endStopName ticketType departureDate departureTime seatQuantity customerName customerPhone paymentMethodId price status purchaseDate issueDate expiryDate usedAt createdAt updatedAt';
+
+const TICKET_QR_SELECT = ' qrCode qrCodeImage';
+
+async function getMyTickets(userId, payload = {}) {
+    const page = Math.max(Number(payload.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(payload.limit) || 10, 1), 100);
+    const skip = (page - 1) * limit;
+    const includeQr = Boolean(payload.includeQr);
+
+    const filter = { user: userId };
+
+    if (payload.status && ['pending', 'paid', 'active', 'used', 'expired', 'cancelled'].includes(payload.status)) {
+        filter.status = payload.status;
+    }
+
+    if (
+        payload.ticketType &&
+        ['single', 'monthlySingleRoute', 'monthlyInterRoute'].includes(payload.ticketType)
+    ) {
+        filter.ticketType = payload.ticketType;
+    }
+
+    if (payload.onlyAvailableQr) {
+        filter.status = { $in: ['pending', 'paid', 'active'] };
+        filter.$or = [
+            { expiryDate: null },
+            { expiryDate: { $gt: new Date() } }
+        ];
+    }
+
+    const selectFields = includeQr
+        ? `${TICKET_LIST_SELECT}${TICKET_QR_SELECT}`
+        : TICKET_LIST_SELECT;
+
+    const [items, total] = await Promise.all([
+        Ticket.find(filter)
+            .select(selectFields)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit),
+        Ticket.countDocuments(filter)
+    ]);
+
+    return { items, page, limit, total };
+}
+
+function startOfToday() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+}
+
+async function getMyTripHistory(userId, payload = {}) {
+    const page = Math.max(Number(payload.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(payload.limit) || 10, 1), 100);
+    const skip = (page - 1) * limit;
+    const today = startOfToday();
+
+    const filter = {
+        user: userId,
+        status: { $ne: 'cancelled' },
+        $or: [
+            { status: 'used' },
+            { status: 'expired' },
+            { usedAt: { $ne: null } },
+            {
+                ticketType: 'single',
+                departureDate: { $lt: today }
+            },
+            {
+                ticketType: { $in: ['monthlySingleRoute', 'monthlyInterRoute'] },
+                expiryDate: { $lt: new Date() }
+            }
+        ]
+    };
+
+    const [items, total] = await Promise.all([
+        Ticket.find(filter)
+            .select(TICKET_LIST_SELECT)
+            .sort({ usedAt: -1, departureDate: -1, createdAt: -1 })
+            .skip(skip)
+            .limit(limit),
+        Ticket.countDocuments(filter)
+    ]);
+
+    return { items, page, limit, total };
+}
+
+async function getTicketById(ticketId, userId) {
+    const ticket = await Ticket.findOne({
+        _id: ticketId,
+        user: userId
+    })
+        .populate('paymentMethodId', '-csc')
+        .populate('routeId', 'name code');
+
+    if (!ticket) {
+        throw new Error('Vé không tồn tại hoặc không thuộc về bạn');
+    }
+
+    return ticket;
+}
+
 module.exports = {
     createTicket,
-    verifyScannedQr
+    verifyScannedQr,
+    getMyTickets,
+    getMyTripHistory,
+    getTicketById
 };

@@ -33,7 +33,55 @@ async function verifyScannedQr(req, res) {
     }
 }
 
+async function getMyTickets(req, res) {
+    try {
+        const result = await ticketService.getMyTickets(req.user._id, req.body);
+        return res.json({
+            success: true,
+            data: result
+        });
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+async function getTicketDetail(req, res) {
+    try {
+        const ticket = await ticketService.getTicketById(req.body.id, req.user._id);
+        return res.json({
+            success: true,
+            data: ticket
+        });
+    } catch (error) {
+        return res.status(404).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+async function getMyTripHistory(req, res) {
+    try {
+        const result = await ticketService.getMyTripHistory(req.user._id, req.body);
+        return res.json({
+            success: true,
+            data: result
+        });
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
 module.exports = {
     createTicket,
-    verifyScannedQr
+    verifyScannedQr,
+    getMyTickets,
+    getTicketDetail,
+    getMyTripHistory
 };
