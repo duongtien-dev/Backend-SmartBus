@@ -49,7 +49,17 @@ const myTicketsBodyRules = [
     body('ticketType')
         .optional()
         .isIn(ticketTypeValues)
-        .withMessage('ticketType phải là single, monthlySingleRoute hoặc monthlyInterRoute')
+        .withMessage('ticketType phải là single, monthlySingleRoute hoặc monthlyInterRoute'),
+    body('includeQr')
+        .optional()
+        .isBoolean()
+        .withMessage('includeQr phải là boolean')
+        .toBoolean(),
+    body('onlyAvailableQr')
+        .optional()
+        .isBoolean()
+        .withMessage('onlyAvailableQr phải là boolean')
+        .toBoolean()
 ];
 
 const idBodyRule = [body('id').isMongoId().withMessage('ID không hợp lệ')];
