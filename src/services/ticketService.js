@@ -165,7 +165,57 @@ async function verifyScannedQr(scannerUserId, data) {
     };
 }
 
+const TICKET_LIST_SELECT =
+    '_id routeId routeName startStopName endStopName ticketType departureDate departureTime seatQuantity customerName customerPhone paymentMethodId price status purchaseDate issueDate expiryDate usedAt createdAt updatedAt';
+
+async function getMyTickets(userId, payload = {}) {
+    const page = Math.max(Number(payload.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(payload.limit) || 10, 1), 100);
+    const skip = (page - 1) * limit;
+
+    const filter = { user: userId };
+
+    if (payload.status && ['pending', 'paid', 'active', 'used', 'expired', 'cancelled'].includes(payload.status)) {
+        filter.status = payload.status;
+    }
+
+    if (
+        payload.ticketType &&
+        ['single', 'monthlySingleRoute', 'monthlyInterRoute'].includes(payload.ticketType)
+    ) {
+        filter.ticketType = payload.ticketType;
+    }
+
+    const [items, total] = await Promise.all([
+        Ticket.find(filter)
+            .select(TICKET_LIST_SELECT)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit),
+        Ticket.countDocuments(filter)
+    ]);
+
+    return { items, page, limit, total };
+}
+
+async function getTicketById(ticketId, userId) {
+    const ticket = await Ticket.findOne({
+        _id: ticketId,
+        user: userId
+    })
+        .populate('paymentMethodId', '-csc')
+        .populate('routeId', 'name code');
+
+    if (!ticket) {
+        throw new Error('Vé không tồn tại hoặc không thuộc về bạn');
+    }
+
+    return ticket;
+}
+
 module.exports = {
     createTicket,
-    verifyScannedQr
+    verifyScannedQr,
+    getMyTickets,
+    getTicketById
 };
