@@ -1,6 +1,6 @@
 # Chức năng theo role: Admin (quản trị viên)
 
-**Role:** `admin`  
+**Role:** `admin`
 **Base URL:** `http://localhost:3000`
 
 ---
@@ -10,10 +10,6 @@
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
 | 1 | Đăng nhập (nhận JWT token) | POST | `/api/users/login` | Không |
-| 2 | Quên mật khẩu — gửi OTP | POST | `/api/users/forgot-password/send-otp` | Không |
-| 3 | Quên mật khẩu — đặt lại mật khẩu | POST | `/api/users/forgot-password/reset` | Không |
-| 4 | Cập nhật thông tin cá nhân | PUT | `/api/users/profile` | Có |
-
 ---
 
 ## 2. Upload

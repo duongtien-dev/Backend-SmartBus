@@ -1,10 +1,10 @@
 ﻿const { body } = require('express-validator');
 
 const createReviewRules = [
-    body('routeId').isMongoId().withMessage('routeId khÃ´ng há»£p lá»‡'),
+    body('routeId').isMongoId().withMessage('routeId không hợp lệ'),
     body('rating')
         .isInt({ min: 1, max: 5 })
-        .withMessage('rating pháº£i tá»« 1 Ä‘áº¿n 5'),
+        .withMessage('rating phải từ 1 đến 5'),
     body('content').optional().trim(),
 ];
 
@@ -12,27 +12,27 @@ const updateReviewRules = [
     body('rating')
         .optional()
         .isInt({ min: 1, max: 5 })
-        .withMessage('rating pháº£i tá»« 1 Ä‘áº¿n 5'),
+        .withMessage('rating phải từ 1 đến 5'),
     body('content').optional().trim(),
 ];
 
 const listReviewRules = [
-    body('page').optional().toInt().isInt({ min: 1 }).withMessage('page pháº£i lÃ  sá»‘ nguyÃªn dÆ°Æ¡ng'),
-    body('limit').optional().toInt().isInt({ min: 1, max: 100 }).withMessage('limit tá»« 1-100'),
+    body('page').optional().toInt().isInt({ min: 1 }).withMessage('page phải là số nguyên dương'),
+    body('limit').optional().toInt().isInt({ min: 1, max: 20 }).withMessage('limit từ 1-20'),
     body('rating')
         .optional()
         .isInt({ min: 1, max: 5 })
-        .withMessage('rating pháº£i tá»« 1 Ä‘áº¿n 5'),
-    body('sort').optional().isIn(['newest', 'oldest']).withMessage('sort pháº£i lÃ  newest hoáº·c oldest'),
-    body('routeId').optional().isMongoId().withMessage('routeId khÃ´ng há»£p lá»‡'),
-    body('userId').optional().isMongoId().withMessage('userId khÃ´ng há»£p lá»‡'),
+        .withMessage('rating phải từ 1 đến 5'),
+    body('sort').optional().isIn(['newest', 'oldest']).withMessage('sort phải là newest hoặc oldest'),
+    body('routeId').optional().isMongoId().withMessage('routeId không hợp lệ'),
+    body('userId').optional().isMongoId().withMessage('userId không hợp lệ'),
 ];
 
 const reviewSummaryRules = [
-    body('routeId').isMongoId().withMessage('routeId khÃ´ng há»£p lá»‡'),
+    body('routeId').isMongoId().withMessage('routeId không hợp lệ'),
 ];
 
-const idBodyRule = [body('id').isMongoId().withMessage('ID khÃ´ng há»£p lá»‡')];
+const idBodyRule = [body('id').isMongoId().withMessage('ID không hợp lệ')];
 
 module.exports = {
     createReviewRules,

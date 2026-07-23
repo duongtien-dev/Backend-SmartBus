@@ -61,8 +61,8 @@ async function listUnreviewedTraveledRoutes({
 
     if (!traveledRouteIds.length) return [];
 
-    const reviewedRouteIds = await Review.distinct('routeId', {
-        userId: travelerUserId,
+    const reviewedRouteIds = await Review.distinct('route', {
+        user: travelerUserId,
     });
     const reviewedSet = new Set(reviewedRouteIds.map(String));
     const unreviewedIds = traveledRouteIds.filter(

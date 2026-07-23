@@ -5,8 +5,20 @@ const Ticket = require('../models/Ticket');
 const Route = require('../models/Route');
 const PaymentMethod = require('../models/PaymentMethod');
 const ScanLog = require('../models/ScanLog');
+const ticketProductService = require('./ticketProductService');
 
 const VALID_VERIFY_STATUSES = new Set(['pending', 'paid', 'active']);
+const MONTHLY_TYPES = new Set(['monthlySingleRoute', 'monthlyInterRoute']);
+
+function computeExpectedPrice(product, seatQuantity) {
+    if (product.code === 'single') {
+        return product.unitPrice;
+    }
+    if (MONTHLY_TYPES.has(product.code)) {
+        return product.unitPrice * Math.max(Number(seatQuantity) || 1, 1);
+    }
+    return product.unitPrice;
+}
 
 function generateQrCodeText() {
     return `TICKET-${crypto.randomUUID()}`;
@@ -67,7 +79,7 @@ function buildTicketDates(ticketType) {
 }
 
 async function createTicket(userId, data) {
-    const route = await Route.findById(data.routeId).select('_id');
+    const route = await Route.findById(data.routeId).select('_id name code');
     if (!route) {
         throw new Error('Tuyến không tồn tại');
     }
@@ -82,7 +94,6 @@ async function createTicket(userId, data) {
 
     const {
         routeId,
-        routeName,
         startStopName,
         endStopName,
         ticketType,
@@ -92,10 +103,21 @@ async function createTicket(userId, data) {
         customerName,
         customerPhone,
         paymentMethodId,
-        price
     } = data;
 
+    const routeName =
+        (route.name && String(route.name).trim()) ||
+        (route.code ? `Tuyến ${route.code}` : 'Tuyến xe buýt');
+
+    const product = await ticketProductService.getActiveProductByCode(ticketType);
+    const price = computeExpectedPrice(product, seatQuantity);
+    const normalizedDepartureTime =
+        departureTime && String(departureTime).trim()
+            ? String(departureTime).trim()
+            : '00:00';
+
     const { issueDate, expiryDate } = buildTicketDates(ticketType);
+    const purchaseDate = new Date();
 
     for (let attempt = 0; attempt < 3; attempt++) {
         const qrCode = generateQrCodeText();
@@ -114,13 +136,15 @@ async function createTicket(userId, data) {
                 endStopName,
                 ticketType,
                 departureDate,
-                departureTime,
+                departureTime: normalizedDepartureTime,
                 seatQuantity,
                 customerName,
                 customerPhone,
                 paymentMethodId,
                 price,
                 user: userId,
+                status: 'paid',
+                purchaseDate,
                 issueDate,
                 expiryDate,
                 qrCode,
