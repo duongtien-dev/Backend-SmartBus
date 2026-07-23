@@ -44,8 +44,8 @@ async function listReviews(req, res) {
             limit: Number(limit) || 10,
             rating: rating != null ? rating : undefined,
             sort: sort || 'newest',
-            routeId: routeId || undefined,
-            userId: userId || undefined,
+            route: routeId || undefined,
+            user: userId || undefined,
         });
         res.json({ success: true, data: result });
     } catch (err) {

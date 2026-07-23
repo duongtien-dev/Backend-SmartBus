@@ -1,35 +1,47 @@
 const mongoose = require('mongoose');
 const Review = require('../models/Review');
 
+const POPULATE = [
+    { path: 'user', select: 'full_name email' },
+    { path: 'route', select: 'code name' },
+];
+
 async function createReview(userId, data) {
-    const existing = await Review.findOne({ userId, routeId: data.routeId });
+    const routeId = data.routeId;
+    const existing = await Review.findOne({ user: userId, route: routeId });
     if (existing) {
         throw new Error('Bạn đã đánh giá tuyến này');
     }
 
-    const review = await Review.create({ ...data, userId });
-    return review;
+    const created = await Review.create({
+        route: routeId,
+        user: userId,
+        rating: data.rating,
+        content: data.content || '',
+    });
+
+    return Review.findById(created._id).populate(POPULATE).lean();
 }
 
 async function updateReview(reviewId, userId, data) {
-    const review = await Review.findOne({ _id: reviewId, userId });
+    const review = await Review.findOne({ _id: reviewId, user: userId });
     if (!review) throw new Error('Đánh giá không tồn tại hoặc không có quyền sửa');
-    const { userId: _uid, routeId: _rid, ...allowed } = data;
+    const { user: _user, route: _route, ...allowed } = data;
     Object.assign(review, allowed);
     await review.save();
-    return review;
+    return Review.findById(review._id).populate(POPULATE).lean();
 }
 
 async function deleteReview(reviewId, userId) {
-    const review = await Review.findOneAndDelete({ _id: reviewId, userId });
+    const review = await Review.findOneAndDelete({ _id: reviewId, user: userId });
     if (!review) throw new Error('Đánh giá không tồn tại hoặc không có quyền xóa');
     return true;
 }
 
-async function listReviews({ page = 1, limit = 10, rating, sort = 'newest', routeId, userId }) {
+async function listReviews({ page = 1, limit = 10, rating, sort = 'newest', route, user }) {
     const query = {};
-    if (routeId) query.routeId = routeId;
-    if (userId) query.userId = userId;
+    if (route) query.route = route;
+    if (user) query.user = user;
     if (rating != null && rating !== '') {
         const r = Number(rating);
         if (r >= 1 && r <= 5) query.rating = r;
@@ -37,28 +49,22 @@ async function listReviews({ page = 1, limit = 10, rating, sort = 'newest', rout
     const sortOpt = sort === 'oldest' ? { createdAt: 1 } : { createdAt: -1 };
     const skip = (page - 1) * limit;
 
-    const [reviews] = await Promise.all([
-        Review.find(query)
-            .sort(sortOpt)
-            .skip(skip)
-            .limit(limit)
-            .populate('userId', 'full_name email')
-            .populate('routeId', 'code name'),
-    ]);
-
-    return reviews;
+    return Review.find(query)
+        .sort(sortOpt)
+        .skip(skip)
+        .limit(limit)
+        .populate(POPULATE)
+        .lean();
 }
 
 async function getReviewById(reviewId) {
-    const review = await Review.findById(reviewId)
-        .populate('userId', 'full_name email')
-        .populate('routeId', 'code name');
+    const review = await Review.findById(reviewId).populate(POPULATE).lean();
     if (!review) throw new Error('Đánh giá không tồn tại');
     return review;
 }
 
 async function getReviewSummary(routeId) {
-    const match = { routeId: new mongoose.Types.ObjectId(routeId) };
+    const match = { route: new mongoose.Types.ObjectId(routeId) };
 
     const [stats, distributionRows] = await Promise.all([
         Review.aggregate([
