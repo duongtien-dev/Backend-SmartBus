@@ -18,7 +18,7 @@ const updateReviewRules = [
 
 const listReviewRules = [
     body('page').optional().toInt().isInt({ min: 1 }).withMessage('page phải là số nguyên dương'),
-    body('limit').optional().toInt().isInt({ min: 1, max: 100 }).withMessage('limit từ 1-100'),
+    body('limit').optional().toInt().isInt({ min: 1, max: 20 }).withMessage('limit từ 1-20'),
     body('rating')
         .optional()
         .isInt({ min: 1, max: 5 })
