@@ -5,7 +5,6 @@ const ticketStatusValues = ['pending', 'paid', 'active', 'used', 'expired', 'can
 
 const createTicketRules = [
     body('routeId').isMongoId().withMessage('routeId không hợp lệ'),
-    body('routeName').trim().notEmpty().withMessage('routeName là bắt buộc'),
     body('startStopName').trim().notEmpty().withMessage('startStopName là bắt buộc'),
     body('endStopName').trim().notEmpty().withMessage('endStopName là bắt buộc'),
     body('ticketType')
@@ -28,7 +27,7 @@ const createTicketRules = [
     body('customerName').trim().notEmpty().withMessage('customerName là bắt buộc'),
     body('customerPhone').trim().notEmpty().withMessage('customerPhone là bắt buộc'),
     body('paymentMethodId').isMongoId().withMessage('paymentMethodId không hợp lệ'),
-    // price do server tính từ TicketProduct — client không cần gửi
+    // routeName & price do server set từ Route / TicketProduct
 ];
 
 const verifyScannedQrRules = [

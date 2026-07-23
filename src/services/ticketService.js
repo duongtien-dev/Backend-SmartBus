@@ -79,7 +79,7 @@ function buildTicketDates(ticketType) {
 }
 
 async function createTicket(userId, data) {
-    const route = await Route.findById(data.routeId).select('_id');
+    const route = await Route.findById(data.routeId).select('_id name code');
     if (!route) {
         throw new Error('Tuyến không tồn tại');
     }
@@ -94,7 +94,6 @@ async function createTicket(userId, data) {
 
     const {
         routeId,
-        routeName,
         startStopName,
         endStopName,
         ticketType,
@@ -105,6 +104,10 @@ async function createTicket(userId, data) {
         customerPhone,
         paymentMethodId,
     } = data;
+
+    const routeName =
+        (route.name && String(route.name).trim()) ||
+        (route.code ? `Tuyến ${route.code}` : 'Tuyến xe buýt');
 
     const product = await ticketProductService.getActiveProductByCode(ticketType);
     const price = computeExpectedPrice(product, seatQuantity);
