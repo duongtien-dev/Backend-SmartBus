@@ -27,7 +27,7 @@ const createTicketRules = [
     body('customerName').trim().notEmpty().withMessage('customerName là bắt buộc'),
     body('customerPhone').trim().notEmpty().withMessage('customerPhone là bắt buộc'),
     body('paymentMethodId').isMongoId().withMessage('paymentMethodId không hợp lệ'),
-    body('price').isFloat({ min: 0 }).withMessage('price phải >= 0').toFloat()
+    body('price').optional().isFloat({ min: 0 }).withMessage('price phải >= 0').toFloat()
 ];
 
 const verifyScannedQrRules = [

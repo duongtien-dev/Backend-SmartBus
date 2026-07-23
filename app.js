@@ -19,6 +19,8 @@ const ticketRoutes = require('./src/routes/ticketRoutes');
 const shiftReportRoutes = require('./src/routes/shiftReportRoutes');
 const adminShiftReportRoutes = require('./src/routes/adminShiftReportRoutes');
 const adminDashboardRoutes = require('./src/routes/adminDashboardRoutes');
+const ticketProductRoutes = require('./src/routes/ticketProductRoutes');
+const adminTicketProductRoutes = require('./src/routes/adminTicketProductRoutes');
 const app = express();
 
 autoValidate();
@@ -54,6 +56,8 @@ app.use('/api/suggest-locations', suggestLocationRoutes);
 app.use('/api/trips', tripRoutes);
 app.use('/api/payment-methods', paymentMethodRoutes);
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/ticket-products', ticketProductRoutes);
+app.use('/api/admin/ticket-products', adminTicketProductRoutes);
 app.use('/api/shift-reports', shiftReportRoutes);
 app.use('/api/admin/shift-reports', adminShiftReportRoutes);
 
