@@ -3,6 +3,7 @@ const QRCode = require('qrcode');
 
 const Ticket = require('../models/Ticket');
 const Route = require('../models/Route');
+const User = require('../models/User');
 const PaymentMethod = require('../models/PaymentMethod');
 const ScanLog = require('../models/ScanLog');
 const ticketProductService = require('./ticketProductService');
@@ -22,6 +23,34 @@ function computeExpectedPrice(product, seatQuantity) {
 
 function generateQrCodeText() {
     return `TICKET-${crypto.randomUUID()}`;
+}
+
+/**
+ * Nhận ISO8601, DD/MM/YYYY (vé lượt) hoặc MM/YYYY (vé tháng).
+ */
+function parseDepartureDate(raw) {
+    if (raw == null) return null;
+    if (raw instanceof Date && !Number.isNaN(raw.getTime())) return raw;
+
+    const value = String(raw).trim();
+    if (!value) return null;
+
+    const ddMmYyyy = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (ddMmYyyy) {
+        const [, dd, mm, yyyy] = ddMmYyyy;
+        const date = new Date(`${yyyy}-${mm}-${dd}T00:00:00.000Z`);
+        return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    const mmYyyy = value.match(/^(\d{2})\/(\d{4})$/);
+    if (mmYyyy) {
+        const [, mm, yyyy] = mmYyyy;
+        const date = new Date(`${yyyy}-${mm}-01T00:00:00.000Z`);
+        return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    const iso = new Date(value);
+    return Number.isNaN(iso.getTime()) ? null : iso;
 }
 
 function getInvalidReason(ticket) {
@@ -84,10 +113,14 @@ async function createTicket(userId, data) {
         throw new Error('Tuyến không tồn tại');
     }
 
-    const paymentMethod = await PaymentMethod.findOne({
-        _id: data.paymentMethodId,
-        user: userId
-    }).select('_id');
+    const [paymentMethod, user] = await Promise.all([
+        PaymentMethod.findOne({
+            _id: data.paymentMethodId,
+            user: userId,
+        }).select('_id'),
+        User.findById(userId).select('full_name phone'),
+    ]);
+
     if (!paymentMethod) {
         throw new Error('Phương thức thanh toán không tồn tại hoặc không thuộc về bạn');
     }
@@ -97,13 +130,30 @@ async function createTicket(userId, data) {
         startStopName,
         endStopName,
         ticketType,
-        departureDate,
         departureTime,
         seatQuantity,
-        customerName,
-        customerPhone,
         paymentMethodId,
     } = data;
+
+    const customerName =
+        String(data.customerName || '').trim() ||
+        String(user?.full_name || '').trim();
+    const customerPhone =
+        String(data.customerPhone || '').trim() ||
+        String(user?.phone || '').trim();
+
+    if (!customerName || !customerPhone) {
+        throw new Error('Thiếu thông tin hành khách (họ tên / SĐT) trên hồ sơ');
+    }
+
+    const departureDate = parseDepartureDate(data.departureDate);
+    if (!departureDate) {
+        throw new Error(
+            ticketType === 'single'
+                ? 'Ngày khởi hành không hợp lệ (DD/MM/YYYY hoặc ISO)'
+                : 'Tháng sử dụng không hợp lệ (MM/YYYY hoặc ISO)'
+        );
+    }
 
     const routeName =
         (route.name && String(route.name).trim()) ||
@@ -125,7 +175,7 @@ async function createTicket(userId, data) {
             errorCorrectionLevel: 'M',
             type: 'image/png',
             margin: 2,
-            width: 320
+            width: 320,
         });
 
         try {
@@ -148,7 +198,7 @@ async function createTicket(userId, data) {
                 issueDate,
                 expiryDate,
                 qrCode,
-                qrCodeImage
+                qrCodeImage,
             });
             return ticket;
         } catch (error) {
