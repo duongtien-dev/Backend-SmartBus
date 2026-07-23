@@ -14,9 +14,10 @@ const createTicketRules = [
         .withMessage('ticketType phải là single, monthlySingleRoute hoặc monthlyInterRoute'),
     body('departureDate')
         .isISO8601()
-        .withMessage('departureDate không hợp lệ')
+        .withMessage('departureDate phải là ISO8601')
         .toDate(),
     body('departureTime')
+        .optional({ values: 'falsy' })
         .trim()
         .matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
         .withMessage('departureTime phải theo định dạng HH:mm'),
@@ -27,7 +28,7 @@ const createTicketRules = [
     body('customerName').trim().notEmpty().withMessage('customerName là bắt buộc'),
     body('customerPhone').trim().notEmpty().withMessage('customerPhone là bắt buộc'),
     body('paymentMethodId').isMongoId().withMessage('paymentMethodId không hợp lệ'),
-    body('price').optional().isFloat({ min: 0 }).withMessage('price phải >= 0').toFloat()
+    // price do server tính từ TicketProduct — client không cần gửi
 ];
 
 const verifyScannedQrRules = [

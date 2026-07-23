@@ -108,8 +108,13 @@ async function createTicket(userId, data) {
 
     const product = await ticketProductService.getActiveProductByCode(ticketType);
     const price = computeExpectedPrice(product, seatQuantity);
+    const normalizedDepartureTime =
+        departureTime && String(departureTime).trim()
+            ? String(departureTime).trim()
+            : '00:00';
 
     const { issueDate, expiryDate } = buildTicketDates(ticketType);
+    const purchaseDate = new Date();
 
     for (let attempt = 0; attempt < 3; attempt++) {
         const qrCode = generateQrCodeText();
@@ -128,13 +133,15 @@ async function createTicket(userId, data) {
                 endStopName,
                 ticketType,
                 departureDate,
-                departureTime,
+                departureTime: normalizedDepartureTime,
                 seatQuantity,
                 customerName,
                 customerPhone,
                 paymentMethodId,
                 price,
                 user: userId,
+                status: 'paid',
+                purchaseDate,
                 issueDate,
                 expiryDate,
                 qrCode,
