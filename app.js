@@ -18,6 +18,11 @@ const paymentMethodRoutes = require('./src/routes/paymentMethodRoutes');
 const ticketRoutes = require('./src/routes/ticketRoutes');
 const shiftReportRoutes = require('./src/routes/shiftReportRoutes');
 const adminShiftReportRoutes = require('./src/routes/adminShiftReportRoutes');
+const leaveRequestRoutes = require('./src/routes/leaveRequestRoutes');
+const activeShiftRoutes = require('./src/routes/activeShiftRoutes');
+const scanLogRoutes = require('./src/routes/scanLogRoutes');
+const staffScheduleRoutes = require('./src/routes/staffScheduleRoutes');
+const adminStaffScheduleRoutes = require('./src/routes/adminStaffScheduleRoutes');
 const adminDashboardRoutes = require('./src/routes/adminDashboardRoutes');
 const ticketProductRoutes = require('./src/routes/ticketProductRoutes');
 const adminTicketProductRoutes = require('./src/routes/adminTicketProductRoutes');
@@ -60,6 +65,11 @@ app.use('/api/ticket-products', ticketProductRoutes);
 app.use('/api/admin/ticket-products', adminTicketProductRoutes);
 app.use('/api/shift-reports', shiftReportRoutes);
 app.use('/api/admin/shift-reports', adminShiftReportRoutes);
+app.use('/api/leave-requests', leaveRequestRoutes);
+app.use('/api/staff-shifts', activeShiftRoutes);
+app.use('/api/scan-logs', scanLogRoutes);
+app.use('/api/staff-schedules', staffScheduleRoutes);
+app.use('/api/admin/staff-schedules', adminStaffScheduleRoutes);
 
 app.get('/health', (req, res) => {
     res.json({ success: true, message: 'OK' });

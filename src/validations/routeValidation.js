@@ -29,7 +29,7 @@ const updateRouteRules = [
 
 const listRouteRules = [
     body('page').optional().toInt().isInt({ min: 1 }).withMessage('page phải là số nguyên dương'),
-    body('limit').optional().toInt().isInt({ min: 1, max: 100 }).withMessage('limit từ 1-100'),
+    body('limit').optional().toInt().isInt({ min: 1, max: 20 }).withMessage('limit từ 1-20'),
     body('search').optional().trim(),
     body('sort').optional().isIn(['newest', 'oldest']).withMessage('sort phải là newest hoặc oldest'),
     body('userId').optional().isMongoId().withMessage('userId không hợp lệ'),
