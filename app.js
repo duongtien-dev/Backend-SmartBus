@@ -18,6 +18,7 @@ const paymentMethodRoutes = require('./src/routes/paymentMethodRoutes');
 const ticketRoutes = require('./src/routes/ticketRoutes');
 const shiftReportRoutes = require('./src/routes/shiftReportRoutes');
 const adminShiftReportRoutes = require('./src/routes/adminShiftReportRoutes');
+const leaveRequestRoutes = require('./src/routes/leaveRequestRoutes');
 const adminDashboardRoutes = require('./src/routes/adminDashboardRoutes');
 const ticketProductRoutes = require('./src/routes/ticketProductRoutes');
 const adminTicketProductRoutes = require('./src/routes/adminTicketProductRoutes');
@@ -60,6 +61,7 @@ app.use('/api/ticket-products', ticketProductRoutes);
 app.use('/api/admin/ticket-products', adminTicketProductRoutes);
 app.use('/api/shift-reports', shiftReportRoutes);
 app.use('/api/admin/shift-reports', adminShiftReportRoutes);
+app.use('/api/leave-requests', leaveRequestRoutes);
 
 app.get('/health', (req, res) => {
     res.json({ success: true, message: 'OK' });

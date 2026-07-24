@@ -1,6 +1,6 @@
 # Chức năng theo role: Staff (nhân viên)
 
-**Role:** `staff`
+**Role:** `staff`  
 **Base URL:** `http://localhost:3000`
 
 ---
@@ -10,6 +10,7 @@
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
 | 1 | Đăng nhập (nhận JWT token) | POST | `/api/users/login` | Không |
+
 ---
 
 ## 2. Tuyến xe & điểm dừng
@@ -17,9 +18,9 @@
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
 | 5 | Danh sách tuyến | POST | `/api/routes/listRoutes` | Không |
-| 6 | Chi tiết tuyến | GET | `/api/routes/detail/:id` | Không |
+| 6 | Chi tiết tuyến | POST | `/api/routes/detail` | Không |
 | 7 | Danh sách điểm dừng theo tuyến | POST | `/api/stops/listByRoute` | Không |
-| 8 | Chi tiết điểm dừng | GET | `/api/stops/detail/:id` | Không |
+| 8 | Chi tiết điểm dừng | POST | `/api/stops/detail` | Không |
 
 ---
 
@@ -35,13 +36,25 @@
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
-| 10 | Xem thống kê ca trước khi gửi | POST | `/api/shift-reports/preview` | Có |
-| 11 | Gửi báo cáo ca làm việc | POST | `/api/shift-reports/submit` | Có |
-| 12 | Xem lịch sử báo cáo ca của bản thân | POST | `/api/shift-reports/my` | Có |
+| 10 | Xem thống kê ca trước khi gửi | POST | `/api/shift-reports/preview` | Có (staff) |
+| 11 | Gửi báo cáo ca làm việc | POST | `/api/shift-reports/submit` | Có (staff) |
+| 12 | Xem lịch sử báo cáo ca của bản thân | POST | `/api/shift-reports/my` | Có (staff) |
 
 ---
 
-## 5. Hệ thống
+## 5. Xin nghỉ (Leave Request)
+
+| # | Chức năng | Method | Endpoint | Auth |
+|---|-----------|--------|----------|------|
+| 14 | Gửi đơn xin nghỉ | POST | `/api/leave-requests/submit` | Có (staff) |
+| 15 | Danh sách đơn xin nghỉ của bản thân | POST | `/api/leave-requests/my` | Có (staff) |
+
+**Body submit:** `{ startDate, endDate, reason }` — `startDate`/`endDate`: `DD/MM/YYYY` hoặc ISO8601.  
+**Body my:** `{ page?, limit?, status?: submitted|approved|rejected }`
+
+---
+
+## 6. Hệ thống
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
