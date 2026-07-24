@@ -93,6 +93,16 @@
 
 ---
 
+## 9b. Xếp lịch ca staff
+
+| # | Chức năng | Method | Endpoint | Auth |
+|---|-----------|--------|----------|------|
+| 29b | Tạo lịch ca cho staff | POST | `/api/admin/staff-schedules` | Có |
+
+**Body:** `{ staffId, workDate (ISO), period?: morning|afternoon|evening, startTime?, endTime?, routeId?, plateNumber? }`
+
+---
+
 ## 10. Hệ thống
 
 | # | Chức năng | Method | Endpoint | Auth |
