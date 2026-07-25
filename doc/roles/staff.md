@@ -18,6 +18,8 @@
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
 | 5 | Danh sách tuyến | POST | `/api/routes/listRoutes` | Không |
+
+**Body listRoutes (staff):** `{ staffId, page?, limit?, sort? }` — lọc tuyến admin đã gán (`Route.staffId`).
 | 6 | Chi tiết tuyến | POST | `/api/routes/detail` | Không |
 | 7 | Danh sách điểm dừng theo tuyến | POST | `/api/stops/listByRoute` | Không |
 | 8 | Chi tiết điểm dừng | POST | `/api/stops/detail` | Không |

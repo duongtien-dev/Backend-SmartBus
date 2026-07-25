@@ -104,6 +104,7 @@ async function listRoutes({
     search,
     sort = 'newest',
     userId,
+    staffId,
     viewerId,
     unreviewedOnly = false,
     travelerUserId,
@@ -123,6 +124,7 @@ async function listRoutes({
 
     const query = {};
     if (userId) query.userId = userId;
+    if (staffId) query.staffId = staffId;
     if (search && search.trim()) {
         const s = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const re = new RegExp(s, 'i');
