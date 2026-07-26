@@ -30,7 +30,7 @@ async function deleteRoute(req, res) {
 
 async function listRoutes(req, res) {
     try {
-        const { page, limit, search, sort, userId, unreviewedOnly } = req.body;
+        const { page, limit, search, sort, userId, staffId, unreviewedOnly } = req.body;
 
         if (unreviewedOnly && !req.user) {
             return res.status(401).json({
@@ -45,6 +45,7 @@ async function listRoutes(req, res) {
             search,
             sort: sort || 'newest',
             userId: userId || undefined,
+            staffId: staffId || undefined,
             viewerId: req.user?._id,
             unreviewedOnly: Boolean(unreviewedOnly),
             travelerUserId: unreviewedOnly ? req.user._id : undefined,

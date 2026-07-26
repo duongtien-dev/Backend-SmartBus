@@ -1,4 +1,4 @@
-﻿const { body } = require('express-validator');
+const { body } = require('express-validator');
 
 const createRouteRules = [
     body('code').trim().notEmpty().withMessage('Mã tuyến không được để trống'),
@@ -33,6 +33,7 @@ const listRouteRules = [
     body('search').optional().trim(),
     body('sort').optional().isIn(['newest', 'oldest']).withMessage('sort phải là newest hoặc oldest'),
     body('userId').optional().isMongoId().withMessage('userId không hợp lệ'),
+    body('staffId').optional().isMongoId().withMessage('staffId không hợp lệ'),
     body('unreviewedOnly').optional().isBoolean().withMessage('unreviewedOnly phải là boolean'),
 ];
 
