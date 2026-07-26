@@ -3,7 +3,7 @@ const routeReportService = require('../services/routeReportService');
 async function createRouteReport(req, res) {
     try {
         const report = await routeReportService.createRouteReport(req.user._id, req.body);
-        res.status(201).json({ success: true, data: report });
+        res.status(201).json({ success: true, message: 'Gửi báo cáo tuyến thành công', data: report });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
     }
@@ -17,7 +17,7 @@ async function updateRouteReport(req, res) {
             req.user._id,
             data
         );
-        res.json({ success: true, data: report });
+        res.json({ success: true, message: 'Cập nhật báo cáo tuyến thành công', data: report });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
     }
@@ -44,7 +44,7 @@ async function listRouteReports(req, res) {
             status,
             type,
         });
-        res.json({ success: true, data: result });
+        res.json({ success: true, message: 'Lấy danh sách báo cáo tuyến thành công', data: result });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
@@ -53,7 +53,7 @@ async function listRouteReports(req, res) {
 async function getRouteReportDetail(req, res) {
     try {
         const report = await routeReportService.getRouteReportById(req.body.id);
-        res.json({ success: true, data: report });
+        res.json({ success: true, message: 'Lấy chi tiết báo cáo tuyến thành công', data: report });
     } catch (err) {
         res.status(404).json({ success: false, message: err.message });
     }

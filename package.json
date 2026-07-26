@@ -1,34 +1,32 @@
 {
-  "name": "backend-bus",
-  "version": "1.0.0",
-  "description": "Backend bus - User & Post API",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
-    "seed:staff-schedules": "node src/seeds/runSeedStaffSchedules.js",
-    "seed:staff-schedules:clear": "node src/seeds/runSeedStaffSchedules.js --clear",
-    "seed:staff-routes": "node src/seeds/runSeedStaffRouteAssignments.js",
-    "seed:staff-routes:clear": "node src/seeds/runSeedStaffRouteAssignments.js --clear"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "axios": "^1.13.6",
-    "bcryptjs": "^2.4.3",
-    "cloudinary": "^2.9.0",
-    "cors": "^2.8.6",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.0",
-    "express-validator": "^7.2.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.8.0",
-    "morgan": "^1.10.1",
-    "multer": "^1.4.5-lts.1",
-    "nodemailer": "^6.10.1",
-    "nodemon": "^3.1.14",
-    "qrcode": "^1.5.4",
-    "streamifier": "^0.1.1"
-  }
+    "name": "backend-bus",
+    "version": "1.0.0",
+    "description": "Backend bus - User & Post API",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "nodemon server.js",
+        "seed:staff-schedules": "node src/seeds/runSeedStaffSchedules.js",
+        "seed:staff-schedules:clear": "node src/seeds/runSeedStaffSchedules.js --clear"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "axios": "^1.13.6",
+        "bcryptjs": "^2.4.3",
+        "cloudinary": "^2.9.0",
+        "cors": "^2.8.6",
+        "dotenv": "^16.4.5",
+        "express": "^4.21.0",
+        "express-validator": "^7.2.0",
+        "jsonwebtoken": "^9.0.2",
+        "mongoose": "^8.8.0",
+        "morgan": "^1.10.1",
+        "multer": "^1.4.5-lts.1",
+        "nodemailer": "^6.10.1",
+        "nodemon": "^3.1.14",
+        "qrcode": "^1.5.4",
+        "streamifier": "^0.1.1"
+    }
 }

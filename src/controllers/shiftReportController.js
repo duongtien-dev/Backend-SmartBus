@@ -5,6 +5,7 @@ async function previewShiftStats(req, res) {
         const data = await shiftReportService.previewShiftStats(req.user._id, req.body);
         return res.json({
             success: true,
+            message: 'Lấy thống kê ca thành công',
             data
         });
     } catch (error) {
@@ -36,6 +37,7 @@ async function getMyShiftReports(req, res) {
         const result = await shiftReportService.getMyShiftReports(req.user._id, req.body);
         return res.json({
             success: true,
+            message: 'Lấy danh sách báo cáo ca thành công',
             data: result
         });
     } catch (error) {
@@ -51,6 +53,7 @@ async function getAdminShiftReports(req, res) {
         const result = await shiftReportService.getAdminShiftReports(req.body);
         return res.json({
             success: true,
+            message: 'Lấy danh sách báo cáo ca (admin) thành công',
             data: result
         });
     } catch (error) {

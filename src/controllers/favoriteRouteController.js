@@ -49,7 +49,7 @@ async function listFavorites(req, res) {
             search,
             sort: sort || 'newest',
         });
-        res.json({ success: true, data: result });
+        res.json({ success: true, message: 'Lấy danh sách tuyến yêu thích thành công', data: result });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }

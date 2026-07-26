@@ -5,6 +5,7 @@ async function getMySchedule(req, res) {
         const result = await staffScheduleService.getMySchedule(req.user._id, req.body);
         return res.json({
             success: true,
+            message: 'Lấy lịch ca thành công',
             data: result
         });
     } catch (error) {

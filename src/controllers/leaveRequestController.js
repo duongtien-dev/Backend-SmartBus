@@ -21,6 +21,7 @@ async function getMyLeaveRequests(req, res) {
         const result = await leaveRequestService.getMyLeaveRequests(req.user._id, req.body);
         return res.json({
             success: true,
+            message: 'Lấy danh sách đơn xin nghỉ thành công',
             data: result
         });
     } catch (error) {
