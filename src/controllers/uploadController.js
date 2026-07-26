@@ -14,7 +14,7 @@ async function uploadImages(req, res) {
             const result = await uploadFromBuffer(file.buffer);
             urls.push(result.secure_url);
         }
-        res.json({ success: true, data: urls });
+        res.json({ success: true, message: 'Upload ảnh thành công', data: urls });
     } catch (err) {
         console.error('[Upload]', err);
         res.status(500).json({ success: false, message: err.message || 'Lỗi upload ảnh' });

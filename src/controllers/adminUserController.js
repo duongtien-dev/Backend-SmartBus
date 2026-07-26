@@ -11,7 +11,7 @@ async function getListUser(req, res) {
             is_priority_user,
             active,
         });
-        res.json({ success: true, data: result });
+        res.json({ success: true, message: 'Lấy danh sách người dùng thành công', data: result });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
@@ -20,7 +20,7 @@ async function getListUser(req, res) {
 async function getUserDetail(req, res) {
     try {
         const user = await adminUserService.getUserById(req.body.id);
-        res.json({ success: true, data: user });
+        res.json({ success: true, message: 'Lấy chi tiết người dùng thành công', data: user });
     } catch (err) {
         res.status(404).json({ success: false, message: err.message });
     }
@@ -29,7 +29,7 @@ async function getUserDetail(req, res) {
 async function updateUserActive(req, res) {
     try {
         const user = await adminUserService.updateUserActive(req.body.id, req.body.active);
-        res.json({ success: true, data: user });
+        res.json({ success: true, message: 'Cập nhật trạng thái tài khoản thành công', data: user });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
     }

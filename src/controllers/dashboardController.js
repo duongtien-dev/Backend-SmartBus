@@ -9,7 +9,7 @@ async function postSummary(req, res) {
             granularity,
             topRoutesLimit: topRoutesLimit != null ? Number(topRoutesLimit) : undefined,
         });
-        res.json({ success: true, data });
+        res.json({ success: true, message: 'Lấy thống kê dashboard thành công', data });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }

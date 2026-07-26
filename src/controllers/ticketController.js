@@ -38,6 +38,7 @@ async function getMyTickets(req, res) {
         const result = await ticketService.getMyTickets(req.user._id, req.body);
         return res.json({
             success: true,
+            message: 'Lấy danh sách vé thành công',
             data: result
         });
     } catch (error) {
@@ -53,6 +54,7 @@ async function getTicketDetail(req, res) {
         const ticket = await ticketService.getTicketById(req.body.id, req.user._id);
         return res.json({
             success: true,
+            message: 'Lấy chi tiết vé thành công',
             data: ticket
         });
     } catch (error) {
@@ -68,6 +70,7 @@ async function getMyTripHistory(req, res) {
         const result = await ticketService.getMyTripHistory(req.user._id, req.body);
         return res.json({
             success: true,
+            message: 'Lấy lịch sử chuyến đi thành công',
             data: result
         });
     } catch (error) {

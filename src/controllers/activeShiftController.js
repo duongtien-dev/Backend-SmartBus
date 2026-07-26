@@ -21,6 +21,7 @@ async function getActive(req, res) {
         const shift = await activeShiftService.getActiveShift(req.user._id);
         return res.json({
             success: true,
+            message: 'Lấy ca đang chạy thành công',
             data: shift
         });
     } catch (error) {
