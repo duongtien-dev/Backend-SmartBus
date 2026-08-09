@@ -34,7 +34,11 @@ const verifyScannedQrRules = [
         .notEmpty()
         .withMessage('qrCode là bắt buộc')
         .isLength({ min: 5, max: 255 })
-        .withMessage('qrCode không hợp lệ')
+        .withMessage('qrCode không hợp lệ'),
+    body('shiftId').optional({ values: 'falsy' }).isMongoId().withMessage('shiftId không hợp lệ'),
+    body('stopId').optional({ values: 'falsy' }).isMongoId().withMessage('stopId không hợp lệ'),
+    body('lat').optional({ values: 'null' }).isFloat({ min: -90, max: 90 }).toFloat(),
+    body('lng').optional({ values: 'null' }).isFloat({ min: -180, max: 180 }).toFloat(),
 ];
 
 const myTicketsBodyRules = [

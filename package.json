@@ -9,7 +9,8 @@
         "seed:staff-schedules": "node src/seeds/runSeedStaffSchedules.js",
         "seed:staff-schedules:clear": "node src/seeds/runSeedStaffSchedules.js --clear",
         "seed:ticket-products": "node src/seeds/runSeedTicketProducts.js",
-        "seed:ticket-products:force": "node src/seeds/runSeedTicketProducts.js --force"
+        "seed:ticket-products:force": "node src/seeds/runSeedTicketProducts.js --force",
+        "worker:push": "node src/workers/runPushDispatch.js"
     },
     "keywords": [],
     "author": "",

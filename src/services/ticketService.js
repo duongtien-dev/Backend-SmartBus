@@ -214,6 +214,7 @@ async function createTicket(userId, data) {
 
 async function verifyScannedQr(scannerUserId, data) {
     const qrCode = String(data.qrCode || '').trim();
+    const ActiveShift = require('../models/ActiveShift');
 
     const ticket = await Ticket.findOne({ qrCode }).select(
         '_id user routeId routeName startStopName endStopName ticketType departureDate departureTime seatQuantity customerName customerPhone price status purchaseDate issueDate expiryDate usedAt qrCode'
@@ -223,19 +224,57 @@ async function verifyScannedQr(scannerUserId, data) {
     const isValid = !invalidReason;
     const reason = invalidReason || 'QR code hợp lệ';
 
+    let shiftId = data.shiftId || null;
+    let stopId = data.stopId || null;
+    let lat = data.lat != null ? Number(data.lat) : null;
+    let lng = data.lng != null ? Number(data.lng) : null;
+
+    if (scannerUserId && !shiftId) {
+        const active = await ActiveShift.findOne({
+            staffId: scannerUserId,
+            status: 'active',
+        }).select('_id lastLat lastLng currentStopOrder routeId');
+        if (active) {
+            shiftId = active._id;
+            if (lat == null) lat = active.lastLat;
+            if (lng == null) lng = active.lastLng;
+        }
+    }
+
+    // Chỉ đánh dấu used cho vé lượt; vé tháng dùng lại đến hết hạn
+    if (
+        isValid &&
+        ticket &&
+        ticket.ticketType === 'single' &&
+        ['paid', 'active', 'pending'].includes(ticket.status)
+    ) {
+        ticket.status = 'used';
+        ticket.usedAt = new Date();
+        await ticket.save();
+    } else if (isValid && ticket && !ticket.usedAt) {
+        ticket.usedAt = new Date();
+        await ticket.save();
+    }
+
     const scanLog = await ScanLog.create({
         ticket: ticket?._id || null,
         qrCode,
         isValid,
         reason,
-        scannedBy: scannerUserId || null
+        scannedBy: scannerUserId || null,
+        shiftId,
+        stopId,
+        lat: Number.isFinite(lat) ? lat : null,
+        lng: Number.isFinite(lng) ? lng : null,
     });
 
     return {
         isValid,
         reason,
         ticket,
-        scanLogId: scanLog._id
+        scanLogId: scanLog._id,
+        shiftId,
+        stopId,
     };
 }
 

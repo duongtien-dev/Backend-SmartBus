@@ -56,7 +56,7 @@ async function listUnreviewedTraveledRoutes({
 }) {
     const traveledRouteIds = await Ticket.distinct('routeId', {
         user: travelerUserId,
-        status: 'used',
+        $or: [{ status: 'used' }, { usedAt: { $ne: null } }],
     });
 
     if (!traveledRouteIds.length) return [];

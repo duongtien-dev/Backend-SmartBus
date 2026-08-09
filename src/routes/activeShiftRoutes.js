@@ -18,4 +18,16 @@ router.post('/active', activeShiftController.getActive);
 
 router.post('/end', activeShiftController.endShift);
 
+router.post(
+    '/location',
+    activeShiftValidation.locationRules,
+    activeShiftController.updateLocation
+);
+
+router.post(
+    '/advance-stop',
+    activeShiftValidation.advanceStopRules,
+    activeShiftController.advanceStop
+);
+
 module.exports = router;

@@ -17,4 +17,8 @@ module.exports = {
         pass: process.env.SMTP_PASS || '',
         from: process.env.FROM_EMAIL || 'noreply@example.com',
     },
+    /** Secret cho cron gọi POST /api/notify/dispatch */
+    workerSecret: process.env.WORKER_SECRET || 'dev-worker-secret',
+    /** Key thiết bị GPS cố định trên xe (A1-Full) */
+    vehicleGpsSecret: process.env.VEHICLE_GPS_SECRET || 'dev-vehicle-gps-secret',
 };

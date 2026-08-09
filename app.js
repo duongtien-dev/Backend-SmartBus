@@ -26,6 +26,9 @@ const adminStaffScheduleRoutes = require('./src/routes/adminStaffScheduleRoutes'
 const adminDashboardRoutes = require('./src/routes/adminDashboardRoutes');
 const ticketProductRoutes = require('./src/routes/ticketProductRoutes');
 const adminTicketProductRoutes = require('./src/routes/adminTicketProductRoutes');
+const liveRoutes = require('./src/routes/liveRoutes');
+const subscriptionRoutes = require('./src/routes/subscriptionRoutes');
+const tourPackRoutes = require('./src/routes/tourPackRoutes');
 const app = express();
 
 autoValidate();
@@ -70,6 +73,9 @@ app.use('/api/staff-shifts', activeShiftRoutes);
 app.use('/api/scan-logs', scanLogRoutes);
 app.use('/api/staff-schedules', staffScheduleRoutes);
 app.use('/api/admin/staff-schedules', adminStaffScheduleRoutes);
+app.use('/api/live', liveRoutes);
+app.use('/api/notify', subscriptionRoutes);
+app.use('/api/tour-packs', tourPackRoutes);
 
 app.get('/health', (req, res) => {
     res.json({ success: true, message: 'OK' });
