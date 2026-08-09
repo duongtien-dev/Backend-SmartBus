@@ -1,0 +1,70 @@
+[{
+  "_id": {
+    "$oid": "69b4c242f4f12dd300dbf53e"
+  },
+  "title": "Bài viết mẫu copy",
+  "summary": "Tóm tắt nội dung",
+  "content": "Nội dung chi tiết bài viết",
+  "images": [
+    "https://res.cloudinary.com/dwfzptm5v/image/upload/v1773453815/backend-bus/vm6wjl3e5zdtnny0vvsr.png"
+  ],
+  "category": "Tin tức",
+  "related_routes": [],
+  "related_stops": [],
+  "user": {
+    "$oid": "69b4b9f91b1a4d2ce511912c"
+  },
+  "createdAt": {
+    "$date": "2026-03-14T02:04:50.087Z"
+  },
+  "updatedAt": {
+    "$date": "2026-03-14T02:06:44.422Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69ba6b32da023fcdaec86d53"
+  },
+  "title": "Bài viết hay về cuộc đời tôi",
+  "summary": "Tóm tắt nội dung",
+  "content": "Nội dung chi tiết bài viết",
+  "images": [
+    "https://res.cloudinary.com/dwfzptm5v/image/upload/v1773453815/backend-bus/vm6wjl3e5zdtnny0vvsr.png"
+  ],
+  "category": "Tin tức",
+  "related_routes": [],
+  "related_stops": [],
+  "user": {
+    "$oid": "69b4b9f91b1a4d2ce511912c"
+  },
+  "createdAt": {
+    "$date": "2026-03-18T09:06:58.193Z"
+  },
+  "updatedAt": {
+    "$date": "2026-03-18T09:06:58.193Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69c90aef262882bd4ba7cf3a"
+  },
+  "title": "Tuyến 3",
+  "summary": "Tuyến",
+  "content": "",
+  "images": [],
+  "category": "",
+  "related_routes": [],
+  "related_stops": [],
+  "user": {
+    "$oid": "69b63cc2516703b4d873ad40"
+  },
+  "createdAt": {
+    "$date": "2026-03-29T11:20:15.195Z"
+  },
+  "updatedAt": {
+    "$date": "2026-03-29T11:20:15.195Z"
+  },
+  "__v": 0
+}]
