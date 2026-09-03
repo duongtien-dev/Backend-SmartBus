@@ -109,7 +109,19 @@
 
 ---
 
-## 11. Hệ thống
+## 11. Chatbot trợ giúp (Gemini)
+
+Hỗ trợ FAQ / cách dùng app / giá vé. **Không** tìm lộ trình A→B (dùng `/api/trips/search`).
+
+| # | Chức năng | Method | Endpoint | Auth |
+|---|-----------|--------|----------|------|
+| 32 | Gửi tin nhắn chatbot | POST | `/api/chat` | Có |
+
+Body: `{ "messages": [{ "role": "user" | "model", "text": "..." }], "locale": "vi" | "en" | "ja" }`
+
+---
+
+## 12. Hệ thống
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|

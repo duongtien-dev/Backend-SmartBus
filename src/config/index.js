@@ -17,4 +17,8 @@ module.exports = {
         pass: process.env.SMTP_PASS || '',
         from: process.env.FROM_EMAIL || 'noreply@example.com',
     },
+    gemini: {
+        apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '',
+        model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+    },
 };
