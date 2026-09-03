@@ -21,6 +21,12 @@ const sendMessageRules = [
         return true;
     }),
     body('locale').optional().isIn(['vi', 'en', 'ja']).withMessage('locale không hợp lệ'),
+    body('conversationId')
+        .optional({ nullable: true })
+        .isString()
+        .trim()
+        .isLength({ min: 4, max: 80 })
+        .withMessage('conversationId không hợp lệ'),
 ];
 
 module.exports = { sendMessageRules };

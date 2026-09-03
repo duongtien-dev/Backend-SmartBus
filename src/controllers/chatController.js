@@ -6,6 +6,8 @@ async function sendMessage(req, res) {
         const data = await chatService.chat({
             messages: req.body.messages,
             locale,
+            userId: req.user?._id,
+            conversationId: req.body.conversationId,
         });
         return res.json({
             success: true,

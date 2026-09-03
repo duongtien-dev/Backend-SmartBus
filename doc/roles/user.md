@@ -111,13 +111,24 @@
 
 ## 11. Chatbot trợ giúp (Gemini)
 
-Hỗ trợ FAQ / cách dùng app / giá vé. **Không** tìm lộ trình A→B (dùng `/api/trips/search`).
+Hỗ trợ FAQ + **truy vấn dữ liệu thật** (tuyến, điểm dừng, đánh giá, vé, giá vé) qua function calling. **Không** tính lộ trình A→B (dùng `/api/trips/search`). Hội thoại có **conversation memory** phía server theo `conversationId`.
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
 | 32 | Gửi tin nhắn chatbot | POST | `/api/chat` | Có |
 
-Body: `{ "messages": [{ "role": "user" | "model", "text": "..." }], "locale": "vi" | "en" | "ja" }`
+Body:
+```json
+{
+  "messages": [{ "role": "user", "text": "Tuyến 01 có những trạm nào?" }],
+  "locale": "vi",
+  "conversationId": "c_optional_session_id"
+}
+```
+
+Response `data`: `{ "reply", "actions", "conversationId" }`
+
+Tools phía server: `search_routes`, `get_route_detail`, `list_stops_by_route`, `search_stops`, `get_route_reviews`, `list_my_tickets`, `list_ticket_products`, `suggest_app_screen`.
 
 ---
 

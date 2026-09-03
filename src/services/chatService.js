@@ -1,87 +1,15 @@
 const { GoogleGenAI } = require('@google/genai');
 const config = require('../config');
 const { buildSystemInstruction, fallbackReply } = require('../knowledge/chatKnowledge');
-const ticketProductService = require('./ticketProductService');
+const {
+    getOrCreateSession,
+    appendTurn,
+    buildMemoryContext,
+    toGeminiContents,
+} = require('./chatMemory');
+const { FUNCTION_DECLARATIONS, executeTool } = require('./chatTools');
 
-const MAX_HISTORY = 12;
-const MAX_TOOL_ROUNDS = 4;
-
-const SCREEN_ACTIONS = {
-    home: { type: 'open_home' },
-    tickets: { type: 'open_tickets' },
-    payment: { type: 'open_payment' },
-    my_tickets: { type: 'open_my_tickets' },
-    language: { type: 'open_language' },
-};
-
-const FUNCTION_DECLARATIONS = [
-    {
-        name: 'list_ticket_products',
-        description:
-            'Get current DanaBus ticket types and prices. Call before answering about ticket prices or product names.',
-        parametersJsonSchema: {
-            type: 'object',
-            properties: {},
-        },
-    },
-    {
-        name: 'suggest_app_screen',
-        description:
-            'Hand the user to an existing app screen instead of doing that task in chat. Use home for A-to-B trip search.',
-        parametersJsonSchema: {
-            type: 'object',
-            properties: {
-                screen: {
-                    type: 'string',
-                    enum: ['home', 'tickets', 'payment', 'my_tickets', 'language'],
-                    description:
-                        'home = trip search; tickets = buy ticket; payment = payment methods; my_tickets = QR tickets; language = app language',
-                },
-            },
-            required: ['screen'],
-        },
-    },
-];
-
-function normalizeMessages(messages) {
-    return messages
-        .slice(-MAX_HISTORY)
-        .map((item) => ({
-            role: item.role === 'model' ? 'model' : 'user',
-            parts: [{ text: String(item.text || '').trim().slice(0, 2000) }],
-        }))
-        .filter((item) => item.parts[0].text);
-}
-
-function pushAction(actions, screen) {
-    const action = SCREEN_ACTIONS[screen];
-    if (!action) return;
-    if (!actions.some((item) => item.type === action.type)) {
-        actions.push(action);
-    }
-}
-
-async function executeTool(name, args, actions) {
-    if (name === 'list_ticket_products') {
-        const products = await ticketProductService.listActiveProducts();
-        return {
-            products: products.map((product) => ({
-                code: product.code,
-                title: product.title,
-                validity: product.validity,
-                unitPrice: product.unitPrice,
-            })),
-        };
-    }
-
-    if (name === 'suggest_app_screen') {
-        const screen = args?.screen;
-        pushAction(actions, screen);
-        return { ok: true, screen };
-    }
-
-    return { error: 'Unknown tool' };
-}
+const MAX_TOOL_ROUNDS = 5;
 
 function getClient() {
     if (!config.gemini.apiKey) {
@@ -92,12 +20,54 @@ function getClient() {
     return new GoogleGenAI({ apiKey: config.gemini.apiKey });
 }
 
-async function chat({ messages, locale = 'vi' }) {
-    const contents = normalizeMessages(messages);
-    if (!contents.length) {
+function extractLatestUserText(messages = []) {
+    for (let i = messages.length - 1; i >= 0; i -= 1) {
+        const item = messages[i];
+        if (item?.role === 'user' && item?.text) {
+            return String(item.text).trim().slice(0, 2000);
+        }
+    }
+    return '';
+}
+
+function syncSessionFromClient(session, messages = []) {
+    if (session.turns.length) return;
+    const history = messages
+        .filter((item) => item?.text && (item.role === 'user' || item.role === 'model'))
+        .slice(-12);
+    if (history.length <= 1) return;
+    const prior = history.slice(0, -1);
+    for (const item of prior) {
+        appendTurn(session, item.role === 'model' ? 'model' : 'user', item.text);
+    }
+}
+
+async function chat({
+    messages = [],
+    locale = 'vi',
+    userId,
+    conversationId,
+}) {
+    const userText = extractLatestUserText(messages);
+    if (!userText) {
         const error = new Error('Tin nhắn không hợp lệ');
         error.status = 400;
         throw error;
+    }
+    if (!userId) {
+        const error = new Error('Cần đăng nhập để dùng chatbot');
+        error.status = 401;
+        throw error;
+    }
+
+    const session = getOrCreateSession(userId, conversationId);
+    syncSessionFromClient(session, messages);
+    appendTurn(session, 'user', userText);
+
+    const memoryContext = buildMemoryContext(session);
+    const contents = toGeminiContents(session);
+    if (!contents.length) {
+        contents.push({ role: 'user', parts: [{ text: userText }] });
     }
 
     const ai = getClient();
@@ -109,9 +79,9 @@ async function chat({ messages, locale = 'vi' }) {
                 model: config.gemini.model,
                 contents,
                 config: {
-                    systemInstruction: buildSystemInstruction(locale),
+                    systemInstruction: buildSystemInstruction(locale, memoryContext),
                     temperature: 0.3,
-                    maxOutputTokens: 768,
+                    maxOutputTokens: 900,
                     thinkingConfig: { thinkingBudget: 0 },
                     automaticFunctionCalling: { disable: true },
                     tools: [{ functionDeclarations: FUNCTION_DECLARATIONS }],
@@ -120,11 +90,14 @@ async function chat({ messages, locale = 'vi' }) {
 
             const calls = response.functionCalls || [];
             if (!calls.length) {
-                const reply = (response.text || '').trim();
-                if (!reply) {
-                    return { reply: fallbackReply(locale), actions };
-                }
-                return { reply, actions };
+                const reply =
+                    (response.text || '').trim() || fallbackReply(locale);
+                appendTurn(session, 'model', reply);
+                return {
+                    reply,
+                    actions,
+                    conversationId: session.conversationId,
+                };
             }
 
             const modelContent = response.candidates?.[0]?.content;
@@ -134,7 +107,10 @@ async function chat({ messages, locale = 'vi' }) {
 
             const parts = [];
             for (const call of calls) {
-                const result = await executeTool(call.name, call.args || {}, actions);
+                const result = await executeTool(call.name, call.args || {}, {
+                    userId,
+                    actions,
+                });
                 const functionResponse = {
                     name: call.name,
                     response: result,
@@ -145,7 +121,13 @@ async function chat({ messages, locale = 'vi' }) {
             contents.push({ role: 'user', parts });
         }
 
-        return { reply: fallbackReply(locale), actions };
+        const reply = fallbackReply(locale);
+        appendTurn(session, 'model', reply);
+        return {
+            reply,
+            actions,
+            conversationId: session.conversationId,
+        };
     } catch (error) {
         if (error.status) throw error;
         const wrapped = new Error(
