@@ -33,4 +33,10 @@ router.post(
     adminUserController.deleteUser
 );
 
+router.post(
+    '/users/createStaff',
+    adminUserValidation.createStaffRules,
+    adminUserController.createStaff
+);
+
 module.exports = router;

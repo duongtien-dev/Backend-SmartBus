@@ -44,9 +44,19 @@ async function deleteUser(req, res) {
     }
 }
 
+async function createStaff(req, res) {
+    try {
+        const user = await adminUserService.createStaffUser(req.body);
+        res.status(201).json({ success: true, message: 'Tạo tài khoản nhân viên thành công', data: user });
+    } catch (err) {
+        res.status(400).json({ success: false, message: err.message });
+    }
+}
+
 module.exports = {
     getListUser,
     getUserDetail,
     updateUserActive,
     deleteUser,
+    createStaff,
 };

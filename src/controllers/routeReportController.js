@@ -59,10 +59,22 @@ async function getRouteReportDetail(req, res) {
     }
 }
 
+async function reviewRouteReport(req, res) {
+    try {
+        const { id, ...payload } = req.body;
+        const report = await routeReportService.reviewRouteReport(id, req.user._id, payload);
+        res.json({ success: true, message: 'Cập nhật trạng thái báo cáo thành công', data: report });
+    } catch (err) {
+        const statusCode = err.message === 'Báo cáo không tồn tại' ? 404 : 400;
+        res.status(statusCode).json({ success: false, message: err.message });
+    }
+}
+
 module.exports = {
     createRouteReport,
     updateRouteReport,
     deleteRouteReport,
     listRouteReports,
     getRouteReportDetail,
+    reviewRouteReport,
 };

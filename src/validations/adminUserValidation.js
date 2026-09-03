@@ -18,8 +18,16 @@ const updateActiveRules = [
 
 const idBodyRule = [body('id').isMongoId().withMessage('ID không hợp lệ')];
 
+const createStaffRules = [
+    body('full_name').trim().notEmpty().withMessage('Họ tên không được để trống'),
+    body('email').trim().isEmail().withMessage('Email không hợp lệ'),
+    body('password').isLength({ min: 6 }).withMessage('Mật khẩu phải có ít nhất 6 ký tự'),
+    body('phone').optional().trim(),
+];
+
 module.exports = {
     listUserRules,
     updateActiveRules,
     idBodyRule,
+    createStaffRules,
 };

@@ -82,10 +82,28 @@ async function reviewShiftReport(req, res) {
     }
 }
 
+async function getAdminShiftReportDetail(req, res) {
+    try {
+        const report = await shiftReportService.getAdminShiftReportById(req.body.id);
+        return res.json({
+            success: true,
+            message: 'Lấy chi tiết báo cáo ca thành công',
+            data: report
+        });
+    } catch (error) {
+        const statusCode = error.message === 'Báo cáo ca không tồn tại' ? 404 : 400;
+        return res.status(statusCode).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
 module.exports = {
     previewShiftStats,
     submitShiftReport,
     getMyShiftReports,
     getAdminShiftReports,
+    getAdminShiftReportDetail,
     reviewShiftReport
 };

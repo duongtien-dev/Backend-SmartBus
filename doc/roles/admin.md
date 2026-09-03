@@ -70,9 +70,12 @@
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
 | 23 | Danh sách user (phân trang, lọc role / is_priority_user / active) | POST | `/api/admin/users/listUsers` | Có |
-| 24 | Chi tiết một user | GET | `/api/admin/users/detail/:id` | Có |
-| 25 | Bật / tắt trạng thái active | PUT | `/api/admin/users/updateActive/:id` | Có |
-| 26 | Xóa user | DELETE | `/api/admin/users/delete/:id` | Có |
+| 24 | Chi tiết một user | POST | `/api/admin/users/detail` | Có |
+| 25 | Bật / tắt trạng thái active | POST | `/api/admin/users/updateActive` | Có |
+| 26 | Xóa user | POST | `/api/admin/users/delete` | Có |
+| 26b | Tạo tài khoản nhân viên (role staff) | POST | `/api/admin/users/createStaff` | Có |
+
+**Body createStaff:** `{ full_name, email, password, phone? }`
 
 ---
 
@@ -88,8 +91,9 @@
 
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
-| 28 | Danh sách báo cáo ca (lọc status, staffId) | POST | `/api/admin/shift-reports` | Có |
-| 29 | Duyệt hoặc từ chối báo cáo ca | PATCH | `/api/admin/shift-reports/:reportId/review` | Có |
+| 28 | Danh sách báo cáo ca (lọc status, staffId) | POST | `/api/admin/shift-reports/list` | Có |
+| 28b | Chi tiết báo cáo ca | POST | `/api/admin/shift-reports/detail` | Có |
+| 29 | Duyệt hoặc từ chối báo cáo ca | POST | `/api/admin/shift-reports/review` | Có |
 
 ---
 
@@ -98,8 +102,44 @@
 | # | Chức năng | Method | Endpoint | Auth |
 |---|-----------|--------|----------|------|
 | 29b | Tạo lịch ca cho staff | POST | `/api/admin/staff-schedules` | Có |
+| 29c | Danh sách lịch ca (theo khoảng ngày) | POST | `/api/admin/staff-schedules/list` | Có |
+| 29d | Chi tiết lịch ca | POST | `/api/admin/staff-schedules/detail` | Có |
+| 29e | Cập nhật lịch ca (chỉ status scheduled) | POST | `/api/admin/staff-schedules/update` | Có |
+| 29f | Hủy lịch ca | POST | `/api/admin/staff-schedules/cancel` | Có |
 
-**Body:** `{ staffId, workDate (ISO), period?: morning|afternoon|evening, startTime?, endTime?, routeId?, plateNumber? }`
+**Body tạo:** `{ staffId, workDate (ISO), period?: morning|afternoon|evening, startTime?, endTime?, routeId?, plateNumber? }`
+
+---
+
+## 9c. Loại vé (Ticket Product)
+
+| # | Chức năng | Method | Endpoint | Auth |
+|---|-----------|--------|----------|------|
+| 29g | Danh sách loại vé | POST | `/api/admin/ticket-products/list` | Có |
+| 29h | Chi tiết loại vé | POST | `/api/admin/ticket-products/detail` | Có |
+| 29i | Tạo loại vé | POST | `/api/admin/ticket-products/create` | Có |
+| 29j | Cập nhật loại vé | POST | `/api/admin/ticket-products/update` | Có |
+| 29k | Ngưng bán (soft delete) | POST | `/api/admin/ticket-products/delete` | Có |
+
+---
+
+## 9d. Triage báo cáo sự cố
+
+| # | Chức năng | Method | Endpoint | Auth |
+|---|-----------|--------|----------|------|
+| 29l | Cập nhật status báo cáo sự cố | POST | `/api/admin/route-reports/review` | Có |
+
+**Body:** `{ id, status: new|in_progress|resolved|rejected, reviewNote? }`
+
+---
+
+## 9e. Duyệt đơn xin nghỉ
+
+| # | Chức năng | Method | Endpoint | Auth |
+|---|-----------|--------|----------|------|
+| 29m | Danh sách đơn nghỉ | POST | `/api/admin/leave-requests/list` | Có |
+| 29n | Chi tiết đơn nghỉ | POST | `/api/admin/leave-requests/detail` | Có |
+| 29o | Duyệt / từ chối đơn nghỉ | POST | `/api/admin/leave-requests/review` | Có |
 
 ---
 

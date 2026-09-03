@@ -208,6 +208,7 @@ async function createSchedule(payload = {}) {
     });
 
     return StaffSchedule.findById(created._id)
+        .populate('staffId', 'full_name email')
         .populate('routeId', 'code name startName endName')
         .lean()
         .then((doc) =>
@@ -216,6 +217,120 @@ async function createSchedule(payload = {}) {
                 activeShift: null
             })
         );
+}
+
+async function listSchedules(payload = {}) {
+    const { from, to } = parseRange(payload);
+    const page = Math.max(Number(payload.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(payload.limit) || 200, 1), 500);
+    const skip = (page - 1) * limit;
+
+    const filter = {
+        workDate: { $gte: from, $lt: to }
+    };
+    if (payload.staffId) filter.staffId = payload.staffId;
+    if (payload.routeId) filter.routeId = payload.routeId;
+    if (payload.period && PERIOD_LABEL[payload.period]) filter.period = payload.period;
+    if (payload.status && STATUS_LABEL[payload.status]) {
+        filter.status = payload.status;
+    } else {
+        filter.status = { $ne: 'cancelled' };
+    }
+
+    const today = startOfUtcDay(new Date());
+    const [docs, total] = await Promise.all([
+        StaffSchedule.find(filter)
+            .populate('staffId', 'full_name email')
+            .populate('routeId', 'code name startName endName')
+            .sort({ workDate: 1, startTime: 1 })
+            .skip(skip)
+            .limit(limit)
+            .lean(),
+        StaffSchedule.countDocuments(filter)
+    ]);
+
+    return {
+        items: docs.map((item) => mapScheduleItem(item, { today, activeShift: null })),
+        from: from.toISOString(),
+        to: to.toISOString(),
+        page,
+        limit,
+        total
+    };
+}
+
+async function getScheduleById(id) {
+    const doc = await StaffSchedule.findById(id)
+        .populate('staffId', 'full_name email')
+        .populate('routeId', 'code name startName endName')
+        .lean();
+    if (!doc) throw new Error('Lịch ca không tồn tại');
+    return mapScheduleItem(doc, {
+        today: startOfUtcDay(new Date()),
+        activeShift: null
+    });
+}
+
+async function updateSchedule(id, payload = {}) {
+    const schedule = await StaffSchedule.findById(id);
+    if (!schedule) throw new Error('Lịch ca không tồn tại');
+    if (schedule.status !== 'scheduled') {
+        throw new Error('Chỉ được sửa lịch chưa check-in');
+    }
+
+    if (payload.staffId) schedule.staffId = payload.staffId;
+    if (payload.workDate) {
+        const workDate = startOfUtcDay(new Date(payload.workDate));
+        if (Number.isNaN(workDate.getTime())) throw new Error('workDate không hợp lệ');
+        schedule.workDate = workDate;
+    }
+    if (payload.period) {
+        if (!PERIOD_LABEL[payload.period]) throw new Error('period không hợp lệ');
+        schedule.period = payload.period;
+        const defaults = {
+            morning: { startTime: '06:00', endTime: '12:00' },
+            afternoon: { startTime: '12:30', endTime: '19:30' },
+            evening: { startTime: '18:00', endTime: '22:00' }
+        };
+        if (!payload.startTime) schedule.startTime = defaults[payload.period].startTime;
+        if (!payload.endTime) schedule.endTime = defaults[payload.period].endTime;
+    }
+    if (payload.startTime) schedule.startTime = String(payload.startTime).trim();
+    if (payload.endTime) schedule.endTime = String(payload.endTime).trim();
+    if (payload.plateNumber !== undefined) {
+        schedule.plateNumber = String(payload.plateNumber || '').trim();
+    }
+
+    if (payload.routeId !== undefined) {
+        if (payload.routeId) {
+            const route = await Route.findById(payload.routeId).select('code name');
+            if (!route) throw new Error('Tuyến không tồn tại');
+            schedule.routeId = payload.routeId;
+            schedule.routeCode = route.code;
+            schedule.routeName = `${route.code} - ${route.name}`;
+        } else {
+            schedule.routeId = null;
+            schedule.routeCode = String(payload.routeCode || '').trim();
+            schedule.routeName = String(payload.routeName || '').trim();
+        }
+    }
+
+    await schedule.save();
+    return getScheduleById(schedule._id);
+}
+
+async function cancelSchedule(id) {
+    const schedule = await StaffSchedule.findById(id);
+    if (!schedule) throw new Error('Lịch ca không tồn tại');
+    if (schedule.status === 'in_progress') {
+        throw new Error('Không thể hủy ca đang chạy');
+    }
+    if (schedule.status === 'completed') {
+        throw new Error('Không thể hủy ca đã hoàn thành');
+    }
+    schedule.status = 'cancelled';
+    await schedule.save();
+    return getScheduleById(schedule._id);
 }
 
 async function markScheduleInProgress(scheduleId, staffId) {
@@ -254,6 +369,10 @@ async function getScheduleForCheckIn(scheduleId, staffId) {
 module.exports = {
     getMySchedule,
     createSchedule,
+    listSchedules,
+    getScheduleById,
+    updateSchedule,
+    cancelSchedule,
     markScheduleInProgress,
     markScheduleCompleted,
     getScheduleForCheckIn,

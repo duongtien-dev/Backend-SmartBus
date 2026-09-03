@@ -20,11 +20,30 @@ async function listUsers({ page = 1, limit = 10, search, role, is_priority_user,
     const skip = (page - 1) * limit;
     const sort = { createdAt: -1 };
 
-    const [users] = await Promise.all([
+    const [items, total] = await Promise.all([
         User.find(query).sort(sort).skip(skip).limit(limit).select('-password'),
+        User.countDocuments(query),
     ]);
 
-    return users;
+    return { items, page, limit, total };
+}
+
+async function createStaffUser({ full_name, email, password, phone }) {
+    const exists = await User.findOne({ email: String(email).trim().toLowerCase() });
+    if (exists) throw new Error('Email đã được sử dụng');
+
+    const user = await User.create({
+        full_name: String(full_name || '').trim(),
+        email: String(email).trim().toLowerCase(),
+        password,
+        phone: String(phone || '').trim(),
+        role: 'staff',
+        active: true,
+    });
+
+    const safe = user.toObject();
+    delete safe.password;
+    return safe;
 }
 
 async function updateUserActive(userId, active) {
@@ -56,6 +75,7 @@ async function deleteUserById(userId, adminId) {
 module.exports = {
     listUsers,
     getUserById,
+    createStaffUser,
     updateUserActive,
     deleteUserById,
 };

@@ -15,6 +15,12 @@ router.post(
 );
 
 router.post(
+    '/detail',
+    ...shiftReportValidation.idBodyRule,
+    shiftReportController.getAdminShiftReportDetail
+);
+
+router.post(
     '/review',
     shiftReportValidation.reviewRules,
     shiftReportController.reviewShiftReport

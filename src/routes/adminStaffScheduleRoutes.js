@@ -14,4 +14,28 @@ router.post(
     staffScheduleController.createSchedule
 );
 
+router.post(
+    '/list',
+    staffScheduleValidation.listScheduleRules,
+    staffScheduleController.listSchedules
+);
+
+router.post(
+    '/detail',
+    ...staffScheduleValidation.idBodyRule,
+    staffScheduleController.getScheduleDetail
+);
+
+router.post(
+    '/update',
+    staffScheduleValidation.updateScheduleRules,
+    staffScheduleController.updateSchedule
+);
+
+router.post(
+    '/cancel',
+    ...staffScheduleValidation.idBodyRule,
+    staffScheduleController.cancelSchedule
+);
+
 module.exports = router;

@@ -41,9 +41,18 @@ const listRouteReportRules = [
 
 const idBodyRule = [body('id').isMongoId().withMessage('ID không hợp lệ')];
 
+const adminReviewRules = [
+    body('id').isMongoId().withMessage('ID không hợp lệ'),
+    body('status')
+        .isIn(['new', 'in_progress', 'resolved', 'rejected'])
+        .withMessage('status phải là new, in_progress, resolved hoặc rejected'),
+    body('reviewNote').optional().isString().trim(),
+];
+
 module.exports = {
     createRouteReportRules,
     updateRouteReportRules,
     listRouteReportRules,
     idBodyRule,
+    adminReviewRules,
 };

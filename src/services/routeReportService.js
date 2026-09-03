@@ -56,9 +56,30 @@ async function listRouteReports({
 async function getRouteReportById(reportId) {
     const report = await RouteReport.findById(reportId)
         .populate('userId', 'full_name email')
-        .populate('routeId', 'code name startName endName');
+        .populate('routeId', 'code name startName endName')
+        .populate('reviewedBy', 'full_name email');
     if (!report) throw new Error('Báo cáo không tồn tại');
     return report;
+}
+
+const ADMIN_REPORT_STATUSES = new Set(['new', 'in_progress', 'resolved', 'rejected']);
+
+async function reviewRouteReport(reportId, adminId, payload = {}) {
+    const nextStatus = payload.status;
+    if (!ADMIN_REPORT_STATUSES.has(nextStatus)) {
+        throw new Error('Trạng thái không hợp lệ');
+    }
+
+    const report = await RouteReport.findById(reportId);
+    if (!report) throw new Error('Báo cáo không tồn tại');
+
+    report.status = nextStatus;
+    report.reviewNote = String(payload.reviewNote || '').trim();
+    report.reviewedBy = adminId;
+    report.reviewedAt = new Date();
+    await report.save();
+
+    return getRouteReportById(report._id);
 }
 
 module.exports = {
@@ -67,4 +88,5 @@ module.exports = {
     deleteRouteReport,
     listRouteReports,
     getRouteReportById,
+    reviewRouteReport,
 };

@@ -43,9 +43,12 @@ const reviewRules = [
     body('reviewNote').optional().isString().withMessage('reviewNote phải là chuỗi').trim()
 ];
 
+const idBodyRule = [body('id').isMongoId().withMessage('ID không hợp lệ')];
+
 module.exports = {
     previewAndSubmitRules,
     myReportBodyRules,
     adminListBodyRules,
     reviewRules,
+    idBodyRule,
 };

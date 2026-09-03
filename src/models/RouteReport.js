@@ -31,6 +31,20 @@ const routeReportSchema = new mongoose.Schema(
             enum: ['new', 'in_progress', 'resolved', 'rejected'],
             default: 'new',
         },
+        reviewNote: {
+            type: String,
+            default: '',
+            trim: true,
+        },
+        reviewedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            default: null,
+        },
+        reviewedAt: {
+            type: Date,
+            default: null,
+        },
     },
     { timestamps: true }
 );

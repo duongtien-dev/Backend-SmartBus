@@ -172,6 +172,14 @@ async function getAdminShiftReports(payload = {}) {
     return { items, page, limit, total };
 }
 
+async function getAdminShiftReportById(id) {
+    const report = await ShiftReport.findById(id)
+        .populate('staffId', 'full_name email phone')
+        .populate('reviewedBy', 'full_name email');
+    if (!report) throw new Error('Báo cáo ca không tồn tại');
+    return report;
+}
+
 async function reviewShiftReport(reportId, adminId, payload) {
     const nextStatus = payload.status;
     if (!ADMIN_REVIEW_STATUSES.has(nextStatus)) {
@@ -197,5 +205,6 @@ module.exports = {
     submitShiftReport,
     getMyShiftReports,
     getAdminShiftReports,
+    getAdminShiftReportById,
     reviewShiftReport
 };

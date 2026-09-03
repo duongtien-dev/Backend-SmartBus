@@ -97,8 +97,66 @@ async function getMyLeaveRequests(staffId, payload = {}) {
     return { items, page, limit, total };
 }
 
+async function getAdminLeaveRequests(payload = {}) {
+    const page = Math.max(Number(payload.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(payload.limit) || 10, 1), 100);
+    const skip = (page - 1) * limit;
+
+    const filter = {};
+    if (payload.status && LEAVE_STATUSES.has(payload.status)) {
+        filter.status = payload.status;
+    }
+    if (payload.staffId) {
+        filter.staffId = payload.staffId;
+    }
+
+    const [items, total] = await Promise.all([
+        LeaveRequest.find(filter)
+            .populate('staffId', 'full_name email phone')
+            .populate('reviewedBy', 'full_name email')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit),
+        LeaveRequest.countDocuments(filter)
+    ]);
+
+    return { items, page, limit, total };
+}
+
+async function getLeaveRequestById(id) {
+    const item = await LeaveRequest.findById(id)
+        .populate('staffId', 'full_name email phone')
+        .populate('reviewedBy', 'full_name email');
+    if (!item) throw new Error('Đơn xin nghỉ không tồn tại');
+    return item;
+}
+
+async function reviewLeaveRequest(id, adminId, payload = {}) {
+    const nextStatus = payload.status;
+    if (!['approved', 'rejected'].includes(nextStatus)) {
+        throw new Error('Trạng thái review không hợp lệ');
+    }
+
+    const item = await LeaveRequest.findById(id);
+    if (!item) throw new Error('Đơn xin nghỉ không tồn tại');
+    if (item.status !== 'submitted') {
+        throw new Error('Đơn đã được xử lý');
+    }
+
+    item.status = nextStatus;
+    item.reviewNote = String(payload.reviewNote || '').trim();
+    item.reviewedBy = adminId;
+    item.reviewedAt = new Date();
+    await item.save();
+
+    return getLeaveRequestById(item._id);
+}
+
 module.exports = {
     submitLeaveRequest,
     getMyLeaveRequests,
+    getAdminLeaveRequests,
+    getLeaveRequestById,
+    reviewLeaveRequest,
     parseLeaveDate
 };
