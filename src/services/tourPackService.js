@@ -3,7 +3,7 @@
  */
 const TOUR_PACKS = [
     {
-        id: 'danang-beach',
+        id: 'DaGong-beach',
         locales: ['vi', 'en', 'ja'],
         title: {
             vi: 'Biển & trung tâm Đà Nẵng',

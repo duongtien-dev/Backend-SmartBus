@@ -25,7 +25,7 @@ async function reply({ messages, locale }) {
             {
                 systemInstruction: {
                     parts: [{ text: [
-                        'You are DanaBot, the assistant for the DanaBus bus app in Da Nang.',
+                        'You are DaGoBot, the assistant for the DagoBus bus app in Da Nang.',
                         `Reply concisely in ${LANGUAGES[locale]}. Help with bus travel and using the app.`,
                         'Use Home to search trips from origin to destination; Tickets to buy tickets;',
                         'Payment to manage payment methods; My Tickets to view purchased tickets and QR codes;',

@@ -55,7 +55,7 @@ async function sendToUser(userId, { title, body, data = {} } = {}) {
     const messages = expoDevices.map((device) => ({
         to: device.token,
         sound: 'default',
-        title: title || 'DanaBus',
+        title: title || 'DagoBus',
         body: body || '',
         data,
     }));

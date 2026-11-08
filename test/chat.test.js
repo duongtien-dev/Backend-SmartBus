@@ -5,7 +5,7 @@ const axios = require('axios');
 const config = require('../src/config');
 const app = require('../app');
 
-test('DanaBot HTTP API', async (t) => {
+test('DaGoBot HTTP API', async (t) => {
     const originalChat = config.chat;
     config.chat = { apiKey: 'test-key-never-send', model: 'test-model' };
     const server = app.listen(0, '127.0.0.1');

@@ -1,4 +1,4 @@
-# DanaBot API
+# DaGoBot API
 
 Mobile calls `POST /api/chat/` (the trailing slash is optional).
 The backend must register this route; an Express `Cannot POST /api/chat/`
