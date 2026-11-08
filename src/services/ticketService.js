@@ -4,9 +4,10 @@ const QRCode = require('qrcode');
 const Ticket = require('../models/Ticket');
 const Route = require('../models/Route');
 const User = require('../models/User');
-const PaymentMethod = require('../models/PaymentMethod');
+const PaymentMethod = require('../models/paymentMethod');
 const ScanLog = require('../models/ScanLog');
 const ticketProductService = require('./ticketProductService');
+const { resolvePurchaseKey, purchaseHash, findPurchase, createWalletPurchase } = require('./walletPurchase');
 
 const VALID_VERIFY_STATUSES = new Set(['pending', 'paid', 'active']);
 const MONTHLY_TYPES = new Set(['monthlySingleRoute', 'monthlyInterRoute']);
@@ -108,6 +109,10 @@ function buildTicketDates(ticketType) {
 }
 
 async function createTicket(userId, data) {
+    data = { ...data, purchaseKey: resolvePurchaseKey(data.purchaseKey) };
+    const hash = purchaseHash(data);
+    const previousPurchase = await findPurchase(userId, data.purchaseKey, hash);
+    if (previousPurchase) return previousPurchase;
     const route = await Route.findById(data.routeId).select('_id name code');
     if (!route) {
         throw new Error('Tuyến không tồn tại');
@@ -179,7 +184,8 @@ async function createTicket(userId, data) {
         });
 
         try {
-            const ticket = await Ticket.create({
+            const ticket = await createWalletPurchase(userId, {
+                purchaseKey: data.purchaseKey,
                 routeId,
                 routeName,
                 startStopName,
@@ -199,7 +205,7 @@ async function createTicket(userId, data) {
                 expiryDate,
                 qrCode,
                 qrCodeImage,
-            });
+            }, hash);
             return ticket;
         } catch (error) {
             const isDuplicateQr = error?.code === 11000 && error?.keyPattern?.qrCode;

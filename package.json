@@ -12,6 +12,8 @@
         "seed:ticket-products:force": "node src/seeds/runSeedTicketProducts.js --force",
         "worker:push": "node src/workers/runPushDispatch.js",
         "seed": "node src/seeds/seed.js",
+        "seed:repair-passwords": "node src/seeds/seed.js --repair-passwords",
+        "seed:wallet-balances": "node src/seeds/seed.js --init-wallet-balances",
         "seed:fresh": "node src/seeds/seed.js --fresh"
     },
     "keywords": [],

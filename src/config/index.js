@@ -2,6 +2,10 @@ require('dotenv').config();
 
 module.exports = {
     port: process.env.PORT || 3000,
+    chat: {
+        apiKey: process.env.GEMINI_API_KEY || '',
+        model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+    },
     jwtSecret: process.env.JWT_SECRET || 'your-jwt-secret-change-in-production',
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
     cloudinary: {

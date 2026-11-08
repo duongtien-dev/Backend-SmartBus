@@ -32,7 +32,8 @@
 
 require('dotenv').config();
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const { seedUsers } = require('./seedUsers');
+const { initializeWalletBalances } = require('./initializeWalletBalances');
 
 // ── Models ──────────────────────────────────────────────────────
 const User            = require('../models/User');
@@ -522,16 +523,38 @@ const ROUTE_REPORT_CONTENTS = [
 // ════════════════════════════════════════════════════════════════
 async function seed() {
     const isFresh = process.argv.includes('--fresh');
+    const repairPasswords = process.argv.includes('--repair-passwords');
+    const initWalletBalances = process.argv.includes('--init-wallet-balances');
+    if (initWalletBalances && (isFresh || repairPasswords)) {
+        throw new Error('Use --init-wallet-balances separately');
+    }
+    if (isFresh && repairPasswords) {
+        throw new Error('Use --repair-passwords separately from --fresh');
+    }
     const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/backend-bus';
 
     console.log('\n🚌  SmartBus – Full Seed Script');
     console.log('═'.repeat(50));
-    console.log(`  Mode  : ${isFresh ? '🔴 FRESH (drop all)' : '🟢 UPSERT'}`);
+    console.log(`  Mode  : ${initWalletBalances ? 'INITIALIZE TEST BALANCES ONLY' : repairPasswords ? 'REPAIR TEST PASSWORDS ONLY' : isFresh ? '🔴 FRESH (drop all)' : '🟢 UPSERT'}`);
     console.log(`  DB    : ${uri.replace(/:\/\/.*@/, '://***@')}`);
     console.log('═'.repeat(50));
 
     await mongoose.connect(uri);
     console.log('  MongoDB connected\n');
+
+    if (initWalletBalances) {
+        const users = await User.find({ email: { $in: RAW_USERS.map((u) => u.email) } }).select('_id');
+        const modified = await initializeWalletBalances(users.map((u) => u._id));
+        log(`Initialized ${modified} unfunded test payment balances to 80000 VND; funded/spent balances preserved`);
+        await mongoose.disconnect();
+        return;
+    }
+
+    if (repairPasswords) {
+        await seedUsers(User, RAW_USERS, { repairPasswords: true, log });
+        await mongoose.disconnect();
+        return;
+    }
 
     // ── FRESH MODE: xoá sạch ───────────────────────────────────
     if (isFresh) {
@@ -552,20 +575,7 @@ async function seed() {
     //  1. USERS
     // ══════════════════════════════════════════════════════════
     console.log('1️⃣  Seeding Users...');
-    const userMap = {}; // email → doc
-
-    for (const u of RAW_USERS) {
-        const existing = await User.findOne({ email: u.email });
-        if (existing) {
-            userMap[u.email] = existing;
-            warn(`User already exists: ${u.email}`);
-            continue;
-        }
-        const hashed = await bcrypt.hash(u.password, 10);
-        const doc = await User.create({ ...u, password: hashed });
-        userMap[u.email] = doc;
-        log(`Created user: ${u.email} [${u.role}]`);
-    }
+    const userMap = await seedUsers(User, RAW_USERS, { log });
 
     const admin1  = userMap['admin@smartbus.vn'];
     const admin2  = userMap['admin2@smartbus.vn'];
@@ -708,13 +718,15 @@ async function seed() {
             doc = existing;
             warn(`PaymentMethod exists: ${pm.userEmail} – ${pm.provider}`);
         } else {
-            doc = await PaymentMethod.create({ ...pmData, user: user._id });
+            doc = await PaymentMethod.create({ ...pmData, user: user._id, balance: 80000, balanceInitializedAt: new Date() });
             log(`PaymentMethod created: ${pm.userEmail} – ${pm.provider}`);
         }
         const uid = user._id.toString();
         if (!paymentMethodMap[uid]) paymentMethodMap[uid] = [];
         paymentMethodMap[uid].push(doc);
     }
+    const initializedWallets = await initializeWalletBalances(Object.values(userMap).map((u) => u._id));
+    if (initializedWallets) log(`Initialized ${initializedWallets} existing test wallet balances`);
 
     // ══════════════════════════════════════════════════════════
     //  7. TICKETS

@@ -1,9 +1,11 @@
-const PaymentMethod = require('../models/PaymentMethod');
+const PaymentMethod = require('../models/paymentMethod');
 
 async function createPaymentMethod(userId, data) {
+    const { balance: _balance, balanceInitializedAt: _initializedAt, ...details } = data;
     const paymentMethod = await PaymentMethod.create({
-        ...data,
+        ...details,
         user: userId,
+        balance: 0,
     });
     return paymentMethod;
 }
@@ -18,7 +20,7 @@ async function updatePaymentMethod(paymentMethodId, userId, data) {
         throw new Error('Phương thức thanh toán không tồn tại hoặc không có quyền sửa');
     }
 
-    const { user: _user, ...allowed } = data;
+    const { user: _user, balance: _balance, balanceInitializedAt: _initializedAt, ...allowed } = data;
     Object.assign(paymentMethod, allowed);
     await paymentMethod.save();
     return paymentMethod;

@@ -4,6 +4,8 @@ const ticketTypeValues = ['single', 'monthlySingleRoute', 'monthlyInterRoute'];
 const ticketStatusValues = ['pending', 'paid', 'active', 'used', 'expired', 'cancelled'];
 
 const createTicketRules = [
+    body('purchaseKey').optional().isString().matches(/^[a-zA-Z0-9_-]{16,128}$/)
+        .withMessage('purchaseKey phải là mã giao dịch duy nhất, dài 16–128 ký tự'),
     body('routeId').isMongoId().withMessage('routeId không hợp lệ'),
     body('startStopName').trim().notEmpty().withMessage('startStopName là bắt buộc'),
     body('endStopName').trim().notEmpty().withMessage('endStopName là bắt buộc'),

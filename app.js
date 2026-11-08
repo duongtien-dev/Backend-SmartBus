@@ -29,6 +29,7 @@ const adminTicketProductRoutes = require('./src/routes/adminTicketProductRoutes'
 const liveRoutes = require('./src/routes/liveRoutes');
 const subscriptionRoutes = require('./src/routes/subscriptionRoutes');
 const tourPackRoutes = require('./src/routes/tourPackRoutes');
+const chatRoutes = require('./src/routes/chatRoutes');
 const app = express();
 
 autoValidate();
@@ -76,6 +77,7 @@ app.use('/api/admin/staff-schedules', adminStaffScheduleRoutes);
 app.use('/api/live', liveRoutes);
 app.use('/api/notify', subscriptionRoutes);
 app.use('/api/tour-packs', tourPackRoutes);
+app.use('/api/chat', chatRoutes);
 
 app.get('/health', (req, res) => {
     res.json({ success: true, message: 'OK' });

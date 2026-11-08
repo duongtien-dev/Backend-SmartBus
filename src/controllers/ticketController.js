@@ -9,6 +9,7 @@ async function createTicket(req, res) {
             data: ticket
         });
     } catch (error) {
+        console.warn('[tickets/create]', error.code || 'CREATE_TICKET_FAILED', error.message);
         return res.status(400).json({
             success: false,
             message: error.message

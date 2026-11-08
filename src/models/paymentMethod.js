@@ -13,6 +13,14 @@ const paymentMethodSchema = new mongoose.Schema(
             enum: ['momo', 'zalopay', 'shopeepay', 'visa', 'napas'],
             required: true
         },
+        // Internal app credit in integer VND, not a provider's live balance.
+        balance: {
+            type: Number,
+            default: 0,
+            min: 0,
+            validate: Number.isSafeInteger,
+        },
+        balanceInitializedAt: { type: Date, default: null },
 
         // Thẻ tín dụng/ ghi nợ
         cardNumber: {

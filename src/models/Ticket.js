@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 
 const ticketSchema = new mongoose.Schema(
     {
+        purchaseKey: { type: String, trim: true },
+        purchaseRequestHash: { type: String, select: false },
+        balanceAfter: { type: Number, min: 0 },
         user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
@@ -108,5 +111,10 @@ const ticketSchema = new mongoose.Schema(
         timestamps: true
     }
 );
+
+ticketSchema.index({ user: 1, purchaseKey: 1 }, {
+    unique: true,
+    partialFilterExpression: { purchaseKey: { $type: 'string' } },
+});
 
 module.exports = mongoose.model('Ticket', ticketSchema);
