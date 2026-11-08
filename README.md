@@ -1,5 +1,19 @@
 # Backend Bus
 
+## Location suggestions
+
+`POST /api/suggest-locations` accepts `{ "keyword": "san bay" }` and returns
+`data: [{ display_name, lat, lng }]`. Bus stops are matched without Vietnamese
+diacritics, using MongoDB or bundled route data when the database is unavailable.
+Additional places come from [Photon](https://github.com/komoot/photon), which
+supports search-as-you-type. Set `PHOTON_API_URL` to a private Photon `/api/`
+endpoint if needed; the default demo server has no availability guarantee.
+Remote results are cached for five minutes (up to 100 queries).
+If Photon fails, matching stops are still returned. When no fallback matches,
+the API returns 503 so clients can display a retry message.
+
+Regression checks: `node --test test/suggestLocation.test.js`.
+
 Node.js (Express + Mongoose) API cho User và Post.
 
 ## Cấu trúc dự án

@@ -1,4 +1,4 @@
-{
+﻿{
     "name": "backend-bus",
     "version": "1.0.0",
     "description": "Backend bus - User & Post API",
@@ -10,7 +10,9 @@
         "seed:staff-schedules:clear": "node src/seeds/runSeedStaffSchedules.js --clear",
         "seed:ticket-products": "node src/seeds/runSeedTicketProducts.js",
         "seed:ticket-products:force": "node src/seeds/runSeedTicketProducts.js --force",
-        "worker:push": "node src/workers/runPushDispatch.js"
+        "worker:push": "node src/workers/runPushDispatch.js",
+        "seed": "node src/seeds/seed.js",
+        "seed:fresh": "node src/seeds/seed.js --fresh"
     },
     "keywords": [],
     "author": "",
@@ -33,3 +35,4 @@
         "streamifier": "^0.1.1"
     }
 }
+

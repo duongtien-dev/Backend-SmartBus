@@ -2,9 +2,13 @@ const { searchPlaces } = require('../services/suggestLocation');
 
 async function suggestLocations(req, res) {
     try {
-        const keyword = String(req.body.keyword || req.query.keyword || '').trim();
+        const input = req.body?.keyword ?? req.query?.keyword;
+        const keyword = typeof input === 'string' ? input.trim() : '';
         if (!keyword) {
             return res.status(400).json({ success: false, message: 'keyword is required' });
+        }
+        if (keyword.length > 200) {
+            return res.status(400).json({ success: false, message: 'keyword must not exceed 200 characters' });
         }
 
         const data = await searchPlaces(keyword);
@@ -14,7 +18,7 @@ async function suggestLocations(req, res) {
             data,
         });
     } catch (error) {
-        return res.status(500).json({
+        return res.status(error.status || 500).json({
             success: false,
             message: 'Không thể lấy gợi ý địa điểm',
             error: error.message,
